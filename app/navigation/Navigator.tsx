@@ -120,7 +120,7 @@ const AuthStackNavigator = () => {
 const Navigator: React.FC = () => {
   return (
     <NavigationContainer theme={MyTheme}>
-      <TabNavigator />
+      <AuthStackNavigator />
     </NavigationContainer>
   );
 };
