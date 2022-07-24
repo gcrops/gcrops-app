@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "169469543040",
+    "project_id": "icrops",
+    "storage_bucket": "icrops.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:169469543040:android:276984c4cab70de4e91c65",
+        "android_client_info": {
+          "package_name": "com.icrops"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "169469543040-688t4so2tsg9gpprmrq3621i902t9sf9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDqNXSp21GBNTnjBWBR2UJ5ZELPJCrRv4Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "169469543040-688t4so2tsg9gpprmrq3621i902t9sf9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
