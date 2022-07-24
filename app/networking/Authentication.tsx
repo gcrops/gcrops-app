@@ -1,5 +1,6 @@
 import {AxiosPromise} from 'axios';
 import {RootObject as ForgotPassword} from '@app/app/networking/types/ForgotPassword';
+import {RootObject as Login} from '@app/app/networking/types/Login';
 import {client} from '@app/app/networking';
 
 export const createUser = (email: string): AxiosPromise<User> => {

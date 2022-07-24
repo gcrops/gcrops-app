@@ -35,9 +35,9 @@ const ForgotScreen: React.FC<Props> = ({navigation}) => {
           showApiLoading(false);
           console.log(response);
         }
-      } catch (error) {
-        console.log({error});
+      } catch (error: any) {
         showApiLoading(false);
+        Alert.alert(error.response.data.error);
       }
     }
   };
