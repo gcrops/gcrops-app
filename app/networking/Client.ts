@@ -5,9 +5,7 @@ import axios from 'axios';
 // axios.defaults.timeout = 6000;
 const client = axios.create({
   baseURL: AppConfig.API_BASE_URL,
-  headers: {
-    source: 'mobile',
-  },
+  headers: {},
 });
 
 export {client};
