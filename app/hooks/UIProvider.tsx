@@ -1,10 +1,12 @@
-import React, {createContext, useContext, useState} from 'react';
+import React, {createContext, useContext, useEffect, useState} from 'react';
+import NetInfo from '@react-native-community/netinfo';
 import {ActivityIndicator, StyleSheet, View} from 'react-native';
 
 const UIContext = createContext({
   showApiLoading: (_value: boolean) => {
     return;
   },
+  netConnection: false,
 });
 
 type UIProviderProps = {
@@ -13,6 +15,16 @@ type UIProviderProps = {
 
 export const UIProvider = (props: UIProviderProps) => {
   const [apiLoading, setApiLoading] = useState<boolean>(false);
+  const [isConnected, setIsConnected] = useState<boolean>(true);
+
+  useEffect(() => {
+    const networkStatus = NetInfo.addEventListener(state => {
+      setIsConnected(state.isConnected || false);
+    });
+    return () => {
+      networkStatus();
+    };
+  }, []);
 
   const renderApiLoader = () => {
     return (
@@ -26,6 +38,7 @@ export const UIProvider = (props: UIProviderProps) => {
     <UIContext.Provider
       value={{
         showApiLoading: setApiLoading,
+        netConnection: isConnected,
       }}>
       {apiLoading ? renderApiLoader() : null}
       {props.children}

@@ -1,10 +1,13 @@
-import {StyleSheet, Text, View} from 'react-native';
+import {Alert, StyleSheet, Text, View} from 'react-native';
 import React, {useState} from 'react';
 import {RButton, RKeyboardAvoidingView} from '@app/app/components';
 import {FloatingLabelInput} from 'react-native-floating-label-input';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from '@app/app/navigation/Navigator';
 import {RouteProp} from '@react-navigation/native';
+import {useUIElements} from '@app/app/hooks/UIProvider';
+import {validateEmail} from '@app/app/resources/validations';
+import {forgotPassword} from '@app/app/networking';
 
 interface NavigationProps {
   navigation: NativeStackNavigationProp<RootStackParamList, 'ForgotPassword'>;
@@ -14,8 +17,30 @@ interface NavigationProps {
 interface Props extends NavigationProps {}
 
 const ForgotScreen: React.FC<Props> = ({navigation}) => {
+  const {netConnection, showApiLoading} = useUIElements();
   const [isEmailFocused, setIsEmailFocused] = useState(false);
   const [email, setEmail] = useState('');
+
+  const forgotPasswordPressed = async () => {
+    if (netConnection) {
+      try {
+        if (!validateEmail(email)) {
+          Alert.alert(
+            "Something's Not Right",
+            'Please enter a valid email address.',
+          );
+        } else {
+          showApiLoading(true);
+          const response = await forgotPassword(email);
+          showApiLoading(false);
+          console.log(response);
+        }
+      } catch (error) {
+        console.log({error});
+        showApiLoading(false);
+      }
+    }
+  };
 
   const passwordDirection = () => {
     return (
@@ -58,10 +83,7 @@ const ForgotScreen: React.FC<Props> = ({navigation}) => {
   const formSubmitView = () => {
     return (
       <View style={styles.formSubmitContainerStyle}>
-        <RButton
-          title={'Submit'}
-          handleClick={() => navigation.navigate('TabHome')}
-        />
+        <RButton title={'Submit'} handleClick={() => forgotPasswordPressed()} />
         <RButton
           title={'Login'}
           handleClick={() => navigation.navigate('LoginScreen')}
