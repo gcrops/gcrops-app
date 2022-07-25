@@ -1,10 +1,14 @@
-import {StyleSheet, Text, View} from 'react-native';
+import {Alert, Image, StyleSheet, Text, View} from 'react-native';
 import React, {useState} from 'react';
 import {FloatingLabelInput} from 'react-native-floating-label-input';
 import {RButton, RKeyboardAvoidingView} from '@app/app/components';
 import {RootStackParamList} from '@app/app/navigation/Navigator';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RouteProp} from '@react-navigation/native';
+import {Colors, Fonts} from '@app/app/theme';
+import {useUIElements} from '@app/app/hooks/UIProvider';
+import {validateEmail} from '@app/app/resources/validations';
+import {createUser} from '@app/app/networking';
 
 interface NavigationProps {
   navigation: NativeStackNavigationProp<RootStackParamList, 'SignupScreen'>;
@@ -14,22 +18,62 @@ interface NavigationProps {
 interface Props extends NavigationProps {}
 
 const SignupScreen: React.FC<Props> = ({navigation}) => {
+  const {netConnection, showApiLoading} = useUIElements();
   const [isEmailFocused, setIsEmailFocused] = useState(false);
-  const [isPasswordFocused, setIsPasswordFocused] = useState(false);
   const [isDesignationFocused, setIsDesignationFocused] = useState(false);
   const [isInstituteFocused, setIsInstituteFocused] = useState(false);
   const [isProvinceFocused, setIsProvinceFocused] = useState(false);
   const [isCountryFocused, setIsCountryFocused] = useState(false);
   const [email, setEmail] = useState('');
   const [designation, setDesignation] = useState('');
-  const [password, setPassword] = useState('');
   const [institute, setInstitute] = useState('');
   const [province, setProvince] = useState('');
   const [country, setCountry] = useState('');
 
+  const signupPressed = async () => {
+    if (netConnection) {
+      try {
+        if (!validateEmail(email)) {
+          Alert.alert(
+            "Something's Not Right",
+            'Please enter a valid email address.',
+          );
+        } else {
+          showApiLoading(true);
+          const response = await createUser(
+            email,
+            designation,
+            institute,
+            province,
+            country,
+          );
+          Alert.alert(response.data.message);
+          showApiLoading(false);
+        }
+      } catch (error: any) {
+        showApiLoading(false);
+        Alert.alert(error.response.data.error);
+      }
+    }
+  };
+
+  const iconView = () => {
+    return (
+      <View style={styles.imageContainerStyle}>
+        <Image
+          source={require('../../resources/images/logo.png')}
+          style={styles.logoStyle}
+        />
+      </View>
+    );
+  };
+
   const formView = () => {
     return (
-      <View>
+      <View style={{marginBottom: 30}}>
+        <View>
+          <Text style={styles.loginHeaderStyle}>{'Sign-up'}</Text>
+        </View>
         <FloatingLabelInput
           label="Email"
           containerStyles={
@@ -47,26 +91,6 @@ const SignupScreen: React.FC<Props> = ({navigation}) => {
           }}
           onBlur={() => {
             setIsEmailFocused(false);
-          }}
-        />
-        <FloatingLabelInput
-          label="Password"
-          containerStyles={
-            isPasswordFocused ? styles.focusedtTextStyle : styles.textStyle
-          }
-          value={password}
-          isFocused={isPasswordFocused}
-          onFocus={() => {
-            setIsPasswordFocused(true);
-          }}
-          onBlur={() => {
-            setIsPasswordFocused(false);
-          }}
-          onChangeText={text => setPassword(text)}
-          textContentType={'password'}
-          isPassword={true}
-          customLabelStyles={{
-            colorFocused: 'red',
           }}
         />
         <FloatingLabelInput
@@ -147,11 +171,9 @@ const SignupScreen: React.FC<Props> = ({navigation}) => {
 
   const formSubmitView = () => {
     return (
-      <View style={styles.formSubmitContainerStyle}>
-        <RButton
-          title={'Create Account'}
-          handleClick={() => navigation.navigate('TabHome')}
-        />
+      <View style={styles.cardOverlay}>
+        {formView()}
+        <RButton title={'Create Account'} handleClick={() => signupPressed()} />
         <Text style={styles.clickTextStyle} onPress={() => navigation.pop()}>
           ALready a member? Login
         </Text>
@@ -160,7 +182,7 @@ const SignupScreen: React.FC<Props> = ({navigation}) => {
   };
   return (
     <RKeyboardAvoidingView>
-      <>{formView()}</>
+      <>{iconView()}</>
       <>{formSubmitView()}</>
     </RKeyboardAvoidingView>
   );
@@ -172,6 +194,19 @@ const styles = StyleSheet.create({
   formSubmitContainerStyle: {
     justifyContent: 'center',
     marginVertical: 20,
+  },
+  imageContainerStyle: {
+    flex: 0.6,
+    alignSelf: 'center',
+    justifyContent: 'center',
+  },
+  cardOverlay: {
+    flex: 0.4,
+    backgroundColor: 'white',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    paddingHorizontal: 32,
+    paddingTop: 32,
   },
   textStyle: {
     height: 40,
@@ -186,5 +221,17 @@ const styles = StyleSheet.create({
   },
   clickTextStyle: {
     textAlign: 'center',
+    color: Colors.secondary,
+    fontFamily: Fonts.RobotoBold,
+  },
+  logoStyle: {
+    width: 90,
+    height: 90,
+  },
+  loginHeaderStyle: {
+    fontFamily: Fonts.RobotoBold,
+    fontSize: 32,
+    marginBottom: 16,
+    color: Colors.secondary,
   },
 });

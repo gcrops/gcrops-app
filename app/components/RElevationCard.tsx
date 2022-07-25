@@ -1,5 +1,6 @@
 import {StyleSheet, Text, View} from 'react-native';
 import React from 'react';
+import {Colors} from '../theme';
 
 interface Props {
   cardText: string;
@@ -17,10 +18,10 @@ export {RElevationCard};
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: '#fff',
+    backgroundColor: Colors.text,
     width: '100%',
     padding: 10,
-    shadowColor: '#000',
+    shadowColor: 'black',
     shadowOffset: {width: 1, height: 1},
     shadowOpacity: 0.4,
     shadowRadius: 8,

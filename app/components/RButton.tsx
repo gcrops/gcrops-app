@@ -5,9 +5,10 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import React from 'react';
+import {Colors, Fonts} from '@app/app/theme';
 
 interface Props {
-  title: String;
+  title: string;
   handleClick: (event: GestureResponderEvent) => void;
 }
 
@@ -23,12 +24,17 @@ export {RButton};
 
 const styles = StyleSheet.create({
   buttonStyle: {
-    height: 30,
-    backgroundColor: '#D6D8D7',
-    borderRadius: 4,
+    height: 45,
+    backgroundColor: Colors.primary,
+    borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 20,
   },
-  titleTextStyles: {fontWeight: 'bold', color: 'black'},
+  titleTextStyles: {
+    color: 'white',
+    fontFamily: Fonts.RobotoBold,
+    fontSize: 20,
+    letterSpacing: 1,
+  },
 });
