@@ -46,9 +46,9 @@ const ForgotScreen: React.FC<Props> = ({navigation}) => {
   const formView = () => {
     return (
       <View>
-        <Text style={styles.loginHeaderStyle}>Email</Text>
+        <Text style={styles.loginHeaderStyle}>Forgot-password</Text>
         <FloatingLabelInput
-          label="Email id"
+          label="Email"
           containerStyles={
             isEmailFocused ? styles.focusedtTextStyle : styles.textStyle
           }

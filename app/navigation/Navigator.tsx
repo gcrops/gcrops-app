@@ -115,8 +115,16 @@ const AuthStackNavigator = () => {
         component={LoginScreen}
         options={{headerShown: false}}
       />
-      <AuthStack.Screen name="SignupScreen" component={SignupScreen} />
-      <AuthStack.Screen name="ForgotPassword" component={ForgotScreen} />
+      <AuthStack.Screen
+        name="SignupScreen"
+        component={SignupScreen}
+        options={{title: 'Create account'}}
+      />
+      <AuthStack.Screen
+        name="ForgotPassword"
+        component={ForgotScreen}
+        options={{title: 'Forgot password'}}
+      />
     </AuthStack.Navigator>
   );
 };
@@ -130,6 +138,7 @@ const LandingScreenNavigator = () => {
 
 const Navigator: React.FC = () => {
   const {authState} = useUIElements();
+
   return (
     <NavigationContainer theme={MyTheme}>
       {authState.userToken ? <TabNavigator /> : <AuthStackNavigator />}
