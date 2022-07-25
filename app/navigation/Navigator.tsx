@@ -90,7 +90,7 @@ const TabNavigator = () => {
           headerTitle: 'My Profile',
           tabBarLabel: '',
           tabBarIcon: ({color, size}) => (
-            <Icon name="user" color={color} size={size} />
+            <Icon name="info" color={color} size={size} />
           ),
         }}
       />
