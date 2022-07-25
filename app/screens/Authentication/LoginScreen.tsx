@@ -56,7 +56,7 @@ const LoginScreen: React.FC<Props> = ({navigation}) => {
           <Text style={styles.loginHeaderStyle}>{'Log-in'}</Text>
         </View>
         <FloatingLabelInput
-          label="Email/User id"
+          label="Email"
           containerStyles={
             isEmailFocused ? styles.focusedtTextStyle : styles.textStyle
           }
@@ -98,13 +98,8 @@ const LoginScreen: React.FC<Props> = ({navigation}) => {
         <TouchableOpacity style={styles.textButtonContainerStyle}>
           <Text
             style={styles.textButtonStyle}
-            onPress={() => navigation.navigate('SignupScreen')}>
-            No account yet? Create one
-          </Text>
-          <Text
-            style={styles.textButtonStyle}
             onPress={() => navigation.navigate('ForgotPassword')}>
-            {'Forget Password ?'}
+            {'Forgot Password ?'}
           </Text>
         </TouchableOpacity>
       </View>
@@ -115,6 +110,11 @@ const LoginScreen: React.FC<Props> = ({navigation}) => {
     return (
       <View style={styles.formSubmitContainerStyle}>
         <RButton title={'Login'} handleClick={() => loginPressed()} />
+        <Text
+          style={styles.textButtonStyle}
+          onPress={() => navigation.navigate('SignupScreen')}>
+          No account yet? Create one
+        </Text>
       </View>
     );
   };
@@ -165,9 +165,13 @@ const styles = StyleSheet.create({
   },
   textButtonContainerStyle: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end',
   },
-  textButtonStyle: {color: Colors.secondary, fontFamily: Fonts.RobotoBold},
+  textButtonStyle: {
+    color: Colors.secondary,
+    fontFamily: Fonts.RobotoBold,
+    alignSelf: 'center',
+  },
 });
 
 export {LoginScreen};
