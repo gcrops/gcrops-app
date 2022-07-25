@@ -175,7 +175,7 @@ const SignupScreen: React.FC<Props> = ({navigation}) => {
         {formView()}
         <RButton title={'Create Account'} handleClick={() => signupPressed()} />
         <Text style={styles.clickTextStyle} onPress={() => navigation.pop()}>
-          ALready a member? Login
+          Already a member? Login
         </Text>
       </View>
     );
