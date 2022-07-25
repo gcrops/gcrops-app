@@ -14,21 +14,16 @@ export const setAuthorization = (accessToken: string | null) => {
   client.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
 };
 
-export const saveAuthorization = async (
-  refreshToken: string,
-  accessToken: string,
-) => {
+export const saveAuthorization = async (accessToken: string) => {
   await AsyncStorage.setItem(
     'Authorization',
     JSON.stringify({
-      refreshToken,
       accessToken,
     }),
   );
 };
 
 export const getAuthorization = async (): Promise<{
-  refreshToken: string;
   accessToken: string;
 } | null> => {
   const authorization = await AsyncStorage.getItem('Authorization');

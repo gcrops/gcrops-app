@@ -5,7 +5,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import React from 'react';
-import {Fonts} from '@app/app/theme';
+import {Colors, Fonts} from '@app/app/theme';
 
 interface Props {
   title: string;
@@ -25,7 +25,7 @@ export {RButton};
 const styles = StyleSheet.create({
   buttonStyle: {
     height: 45,
-    backgroundColor: '#4AC247',
+    backgroundColor: Colors.primary,
     borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',

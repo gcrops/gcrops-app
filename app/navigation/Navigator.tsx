@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {DefaultTheme, NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
@@ -14,6 +14,10 @@ import {
   MapPlottingScreen,
   ProfileScreen,
 } from '../screens/PostAuthentication';
+import {Colors} from '../theme';
+import {getAuthorization} from '../networking/Client';
+import {LandingScreen} from '../screens/LandingScreen';
+import {useUIElements} from '../hooks/UIProvider';
 
 export type RootStackParamList = {
   LoginScreen: undefined;
@@ -30,18 +34,18 @@ const MyTheme = {
   ...DefaultTheme,
   colors: {
     ...DefaultTheme.colors,
-    primary: '#08607E',
-    background: '#FAFAFA',
-    card: '#4AC247',
-    border: '#08607E',
-    text: '#ffffff',
+    primary: Colors.secondary,
+    background: Colors.background,
+    card: Colors.primary,
+    border: Colors.secondary,
+    text: Colors.text,
   },
 };
 
 const TabNavigator = () => {
   return (
     <Tab.Navigator
-      initialRouteName="HomeStack"
+      initialRouteName="Home"
       screenOptions={{
         tabBarIconStyle: {marginTop: 6},
         headerShown: false,
@@ -116,11 +120,19 @@ const AuthStackNavigator = () => {
     </AuthStack.Navigator>
   );
 };
+const LandingScreenNavigator = () => {
+  return (
+    <AuthStack.Navigator initialRouteName="LandingScreen">
+      <AuthStack.Screen name="LandingScreen" component={LandingScreen} />
+    </AuthStack.Navigator>
+  );
+};
 
 const Navigator: React.FC = () => {
+  const {authState} = useUIElements();
   return (
     <NavigationContainer theme={MyTheme}>
-      <AuthStackNavigator />
+      {authState.userToken ? <TabNavigator /> : <AuthStackNavigator />}
     </NavigationContainer>
   );
 };

@@ -1,6 +1,6 @@
 import {Alert, StyleSheet, Text, View} from 'react-native';
 import React, {useState} from 'react';
-import {RButton, RKeyboardAvoidingView} from '@app/app/components';
+import {RButton, RKeyboardAvoidingView, RLogo} from '@app/app/components';
 import {FloatingLabelInput} from 'react-native-floating-label-input';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from '@app/app/navigation/Navigator';
@@ -8,6 +8,7 @@ import {RouteProp} from '@react-navigation/native';
 import {useUIElements} from '@app/app/hooks/UIProvider';
 import {validateEmail} from '@app/app/resources/validations';
 import {forgotPassword} from '@app/app/networking';
+import {Colors, Fonts} from '@app/app/theme';
 
 interface NavigationProps {
   navigation: NativeStackNavigationProp<RootStackParamList, 'ForgotPassword'>;
@@ -32,8 +33,8 @@ const ForgotScreen: React.FC<Props> = ({navigation}) => {
         } else {
           showApiLoading(true);
           const response = await forgotPassword(email);
+          Alert.alert(response.data.message);
           showApiLoading(false);
-          console.log(response);
         }
       } catch (error: any) {
         showApiLoading(false);
@@ -42,21 +43,10 @@ const ForgotScreen: React.FC<Props> = ({navigation}) => {
     }
   };
 
-  const passwordDirection = () => {
-    return (
-      <View>
-        <Text>
-          A Password reset link will be sent to the emil id specified. Please
-          follow the instructions to reset the password login
-        </Text>
-      </View>
-    );
-  };
-
   const formView = () => {
     return (
-      <View style={styles.formViewContainerStyle}>
-        <Text style={styles.emailHeaderStyle}>Email</Text>
+      <View>
+        <Text style={styles.loginHeaderStyle}>Email</Text>
         <FloatingLabelInput
           label="Email id"
           containerStyles={
@@ -84,19 +74,22 @@ const ForgotScreen: React.FC<Props> = ({navigation}) => {
     return (
       <View style={styles.formSubmitContainerStyle}>
         <RButton title={'Submit'} handleClick={() => forgotPasswordPressed()} />
-        <RButton
-          title={'Login'}
-          handleClick={() => navigation.navigate('LoginScreen')}
-        />
+        <Text
+          style={styles.textButtonStyle}
+          onPress={() => navigation.navigate('LoginScreen')}>
+          {'Back to login'}
+        </Text>
       </View>
     );
   };
 
   return (
     <RKeyboardAvoidingView>
-      <>{passwordDirection()}</>
-      <>{formView()}</>
-      <>{formSubmitView()}</>
+      <RLogo />
+      <View style={styles.cardOverlay}>
+        <>{formView()}</>
+        <>{formSubmitView()}</>
+      </View>
     </RKeyboardAvoidingView>
   );
 };
@@ -124,13 +117,26 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  emailHeaderStyle: {
-    fontSize: 25,
-    fontWeight: 'bold',
-    marginRight: 40,
-  },
   formSubmitContainerStyle: {
-    justifyContent: 'center',
-    marginBottom: 20,
+    marginTop: 40,
+  },
+  cardOverlay: {
+    flex: 0.5,
+    backgroundColor: 'white',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    paddingHorizontal: 32,
+    paddingTop: 32,
+  },
+  loginHeaderStyle: {
+    fontFamily: Fonts.RobotoBold,
+    fontSize: 32,
+    marginBottom: 16,
+    color: Colors.secondary,
+  },
+  textButtonStyle: {
+    color: Colors.secondary,
+    fontFamily: Fonts.RobotoBold,
+    alignSelf: 'center',
   },
 });

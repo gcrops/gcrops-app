@@ -1,14 +1,15 @@
-import {Alert, Image, StyleSheet, Text, View} from 'react-native';
+import {Alert, StyleSheet, Text, View, TouchableOpacity} from 'react-native';
 import React, {useState} from 'react';
 import {FloatingLabelInput} from 'react-native-floating-label-input';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from '@app/app/navigation/Navigator';
 import {RouteProp} from '@react-navigation/native';
-import {RButton, RKeyboardAvoidingView} from '@app/app/components';
+import {RButton, RKeyboardAvoidingView, RLogo} from '@app/app/components';
 import {useUIElements} from '@app/app/hooks/UIProvider';
 import {validateEmail} from '@app/app/resources/validations';
 import {loginUser} from '@app/app/networking';
 import {saveAuthorization} from '@app/app/networking/Client';
+import {Colors, Fonts} from '@app/app/theme';
 
 interface NavigationProps {
   navigation: NativeStackNavigationProp<RootStackParamList, 'LoginScreen'>;
@@ -18,22 +19,12 @@ interface NavigationProps {
 interface Props extends NavigationProps {}
 
 const LoginScreen: React.FC<Props> = ({navigation}) => {
-  const {netConnection, showApiLoading} = useUIElements();
+  const {netConnection, showApiLoading, authDispatch, authState} =
+    useUIElements();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isEmailFocused, setIsEmailFocused] = useState(false);
   const [isPasswordFocused, setIsPasswordFocused] = useState(false);
-
-  const iconView = () => {
-    return (
-      <View style={styles.imageContainerStyle}>
-        <Image
-          source={require('../../resources/images/logo.png')}
-          style={styles.logoStyle}
-        />
-      </View>
-    );
-  };
 
   const loginPressed = async () => {
     if (netConnection) {
@@ -46,11 +37,13 @@ const LoginScreen: React.FC<Props> = ({navigation}) => {
         } else {
           showApiLoading(true);
           const response = await loginUser(email, password);
+          saveAuthorization(response.data.access_token);
+          authDispatch.signIn(response.data.access_token);
           showApiLoading(false);
-          console.log(response);
         }
-      } catch (error) {
+      } catch (error: any) {
         console.log({error});
+        Alert.alert(error.response.data.error);
         showApiLoading(false);
       }
     }
@@ -59,6 +52,9 @@ const LoginScreen: React.FC<Props> = ({navigation}) => {
   const formView = () => {
     return (
       <View>
+        <View>
+          <Text style={styles.loginHeaderStyle}>{'Log-in'}</Text>
+        </View>
         <FloatingLabelInput
           label="Email/User id"
           containerStyles={
@@ -97,7 +93,20 @@ const LoginScreen: React.FC<Props> = ({navigation}) => {
           customLabelStyles={{
             colorFocused: 'red',
           }}
+          showPasswordImageStyles={{tintColor: Colors.secondary}}
         />
+        <TouchableOpacity style={styles.textButtonContainerStyle}>
+          <Text
+            style={styles.textButtonStyle}
+            onPress={() => navigation.navigate('SignupScreen')}>
+            No account yet? Create one
+          </Text>
+          <Text
+            style={styles.textButtonStyle}
+            onPress={() => navigation.navigate('ForgotPassword')}>
+            {'Forget Password ?'}
+          </Text>
+        </TouchableOpacity>
       </View>
     );
   };
@@ -106,44 +115,28 @@ const LoginScreen: React.FC<Props> = ({navigation}) => {
     return (
       <View style={styles.formSubmitContainerStyle}>
         <RButton title={'Login'} handleClick={() => loginPressed()} />
-        <RButton
-          title={'Forgot Password'}
-          handleClick={() => navigation.navigate('ForgotPassword')}
-        />
-        <Text
-          style={styles.clickTextStyle}
-          onPress={() => navigation.navigate('SignupScreen')}>
-          No account yet? Create one
-        </Text>
       </View>
     );
   };
 
   return (
     <RKeyboardAvoidingView>
+      {authState.userToken}
       <>
-        <>{iconView()}</>
-        <>{formView()}</>
-        <>{formSubmitView()}</>
+        <RLogo />
+        <View style={styles.cardOverlay}>
+          <>{formView()}</>
+          <>{formSubmitView()}</>
+        </View>
       </>
     </RKeyboardAvoidingView>
   );
 };
 
 const styles = StyleSheet.create({
-  imageContainerStyle: {
-    flex: 0.5,
-    alignSelf: 'center',
-    justifyContent: 'center',
-  },
   formSubmitContainerStyle: {
-    flex: 0.9,
+    flex: 0.6,
     justifyContent: 'center',
-    marginBottom: 20,
-  },
-  logoStyle: {
-    width: 70,
-    height: 70,
   },
   textStyle: {
     height: 40,
@@ -156,9 +149,25 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     borderBottomColor: 'red',
   },
-  clickTextStyle: {
-    textAlign: 'center',
+  cardOverlay: {
+    flex: 0.5,
+    backgroundColor: 'white',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    paddingHorizontal: 32,
+    paddingTop: 32,
   },
+  loginHeaderStyle: {
+    fontFamily: Fonts.RobotoBold,
+    fontSize: 32,
+    marginBottom: 16,
+    color: Colors.secondary,
+  },
+  textButtonContainerStyle: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  textButtonStyle: {color: Colors.secondary, fontFamily: Fonts.RobotoBold},
 });
 
 export {LoginScreen};
