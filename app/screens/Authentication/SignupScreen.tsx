@@ -1,7 +1,7 @@
-import {Alert, Image, StyleSheet, Text, View} from 'react-native';
+import {Image, StyleSheet, Text, View} from 'react-native';
 import React, {useState} from 'react';
 import {FloatingLabelInput} from 'react-native-floating-label-input';
-import {RButton, RKeyboardAvoidingView} from '@app/app/components';
+import {RAlert, RButton, RKeyboardAvoidingView} from '@app/app/components';
 import {RootStackParamList} from '@app/app/navigation/Navigator';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RouteProp} from '@react-navigation/native';
@@ -29,15 +29,15 @@ const SignupScreen: React.FC<Props> = ({navigation}) => {
   const [institute, setInstitute] = useState('');
   const [province, setProvince] = useState('');
   const [country, setCountry] = useState('');
+  const [showValidationAlert, setShowValidationAlert] = useState(false);
+  const [showErrorAlert, setShowErrorAlert] = useState(false);
+  const [message, setMessage] = useState({title: '', message: ''});
 
   const signupPressed = async () => {
     if (netConnection) {
       try {
         if (!validateEmail(email)) {
-          Alert.alert(
-            "Something's Not Right",
-            'Please enter a valid email address.',
-          );
+          setShowValidationAlert(true);
         } else {
           showApiLoading(true);
           const response = await createUser(
@@ -47,12 +47,17 @@ const SignupScreen: React.FC<Props> = ({navigation}) => {
             province,
             country,
           );
-          Alert.alert(response.data.message);
+          setMessage({title: '', message: response.data.message});
+          setShowErrorAlert(true);
           showApiLoading(false);
         }
       } catch (error: any) {
         showApiLoading(false);
-        Alert.alert(error.response.data.error);
+        setMessage({
+          title: "Something's Not Right",
+          message: error.response.data.error,
+        });
+        setShowErrorAlert(true);
       }
     }
   };
@@ -184,6 +189,18 @@ const SignupScreen: React.FC<Props> = ({navigation}) => {
     <RKeyboardAvoidingView>
       <>{iconView()}</>
       <>{formSubmitView()}</>
+      <RAlert
+        title="Something's Not Right"
+        message="Please enter a valid email address."
+        showAlert={showValidationAlert}
+        setShowAlert={setShowValidationAlert}
+      />
+      <RAlert
+        title={message.title}
+        message={message.message}
+        showAlert={showErrorAlert}
+        setShowAlert={setShowErrorAlert}
+      />
     </RKeyboardAvoidingView>
   );
 };

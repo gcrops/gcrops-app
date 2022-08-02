@@ -1,10 +1,15 @@
-import {Alert, StyleSheet, Text, View, TouchableOpacity} from 'react-native';
+import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
 import React, {useState} from 'react';
 import {FloatingLabelInput} from 'react-native-floating-label-input';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from '@app/app/navigation/Navigator';
 import {RouteProp} from '@react-navigation/native';
-import {RButton, RKeyboardAvoidingView, RLogo} from '@app/app/components';
+import {
+  RAlert,
+  RButton,
+  RKeyboardAvoidingView,
+  RLogo,
+} from '@app/app/components';
 import {useUIElements} from '@app/app/hooks/UIProvider';
 import {validateEmail} from '@app/app/resources/validations';
 import {loginUser} from '@app/app/networking';
@@ -25,15 +30,15 @@ const LoginScreen: React.FC<Props> = ({navigation}) => {
   const [password, setPassword] = useState('');
   const [isEmailFocused, setIsEmailFocused] = useState(false);
   const [isPasswordFocused, setIsPasswordFocused] = useState(false);
+  const [showValidationAlert, setShowValidationAlert] = useState(false);
+  const [showErrorAlert, setShowErrorAlert] = useState(false);
+  const [message, setMessage] = useState({title: '', message: ''});
 
   const loginPressed = async () => {
     if (netConnection) {
       try {
         if (!validateEmail(email)) {
-          Alert.alert(
-            "Something's Not Right",
-            'Please enter a valid email address.',
-          );
+          setShowValidationAlert(true);
         } else {
           showApiLoading(true);
           const response = await loginUser(email, password);
@@ -42,8 +47,11 @@ const LoginScreen: React.FC<Props> = ({navigation}) => {
           showApiLoading(false);
         }
       } catch (error: any) {
-        console.log({error});
-        Alert.alert(error.response.data.error);
+        setMessage({
+          title: "Something's Not Right",
+          message: error.response.data.error,
+        });
+        setShowErrorAlert(true);
         showApiLoading(false);
       }
     }
@@ -127,6 +135,18 @@ const LoginScreen: React.FC<Props> = ({navigation}) => {
         <View style={styles.cardOverlay}>
           <>{formView()}</>
           <>{formSubmitView()}</>
+          <RAlert
+            title="Something's Not Right"
+            message="Please enter a valid email address."
+            showAlert={showValidationAlert}
+            setShowAlert={setShowValidationAlert}
+          />
+          <RAlert
+            title={message.title}
+            message={message.message}
+            showAlert={showErrorAlert}
+            setShowAlert={setShowErrorAlert}
+          />
         </View>
       </>
     </RKeyboardAvoidingView>
