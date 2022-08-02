@@ -1,18 +1,38 @@
 import {ScrollView, StyleSheet} from 'react-native';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
+import {Item as Help} from '@app/app/networking/types/Help';
 import {RElevationCard, RKeyboardAvoidingView} from '@app/app/components';
+import {helpData} from '@app/app/networking';
+import {useUIElements} from '@app/app/hooks/UIProvider';
 
 const HelpScreen = () => {
+  const {netConnection, showApiLoading} = useUIElements();
+  const [helpObj, setHelpObj] = useState<Help[]>();
+
+  const helpApiCall = async () => {
+    if (netConnection) {
+      try {
+        showApiLoading(true);
+        let response = await helpData();
+        setHelpObj(response.data.items);
+        showApiLoading(false);
+      } catch (error) {
+        console.log('error', error);
+        showApiLoading(false);
+      }
+    }
+  };
+
+  useEffect(() => {
+    helpApiCall();
+  }, []);
+
   return (
     <RKeyboardAvoidingView>
-      <ScrollView style={{padding: 10}}>
-        <RElevationCard cardText="Collect Daa on areas greater than 90 by 90 meter. If you are unable to find a pure area of 90 by 90 meters and a second crop is present, please documen it using the secondary crop field" />
-        <RElevationCard cardText="Collect Daa on areas greater than 90 by 90 meter. If you are unable to find a pure area of 90 by 90 meters and a second crop is present, please documen it using the secondary crop field" />
-        <RElevationCard cardText="Collect Daa on areas greater than 90 by 90 meter. If you are unable to find a pure area of 90 by 90 meters and a second crop is present, please documen it using the secondary crop field" />
-        <RElevationCard cardText="Collect Daa on areas greater than 90 by 90 meter. If you are unable to find a pure area of 90 by 90 meters and a second crop is present, please documen it using the secondary crop field" />
-        <RElevationCard cardText="Collect Daa on areas greater than 90 by 90 meter. If you are unable to find a pure area of 90 by 90 meters and a second crop is present, please documen it using the secondary crop field" />
-        <RElevationCard cardText="Collect Daa on areas greater than 90 by 90 meter. If you are unable to find a pure area of 90 by 90 meters and a second crop is present, please documen it using the secondary crop field" />
-        <RElevationCard cardText="Collect Daa on areas greater than 90 by 90 meter. If you are unable to find a pure area of 90 by 90 meters and a second crop is present, please documen it using the secondary crop field" />
+      <ScrollView style={styles.mainContainerStyle}>
+        {helpObj?.map((item, index) => (
+          <RElevationCard cardText={item.content} key={index} />
+        ))}
       </ScrollView>
     </RKeyboardAvoidingView>
   );
@@ -20,4 +40,4 @@ const HelpScreen = () => {
 
 export default HelpScreen;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({mainContainerStyle: {paddingHorizontal: 16}});

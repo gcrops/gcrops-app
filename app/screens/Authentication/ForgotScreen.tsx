@@ -1,6 +1,11 @@
-import {Alert, StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, View} from 'react-native';
 import React, {useState} from 'react';
-import {RButton, RKeyboardAvoidingView, RLogo} from '@app/app/components';
+import {
+  RAlert,
+  RButton,
+  RKeyboardAvoidingView,
+  RLogo,
+} from '@app/app/components';
 import {FloatingLabelInput} from 'react-native-floating-label-input';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from '@app/app/navigation/Navigator';
@@ -21,24 +26,29 @@ const ForgotScreen: React.FC<Props> = ({navigation}) => {
   const {netConnection, showApiLoading} = useUIElements();
   const [isEmailFocused, setIsEmailFocused] = useState(false);
   const [email, setEmail] = useState('');
+  const [message, setMessage] = useState({title: '', message: ''});
+  const [showValidationAlert, setShowValidationAlert] = useState(false);
+  const [showErrorAlert, setShowErrorAlert] = useState(false);
 
   const forgotPasswordPressed = async () => {
     if (netConnection) {
       try {
         if (!validateEmail(email)) {
-          Alert.alert(
-            "Something's Not Right",
-            'Please enter a valid email address.',
-          );
+          setShowValidationAlert(true);
         } else {
           showApiLoading(true);
           const response = await forgotPassword(email);
-          Alert.alert(response.data.message);
+          setMessage({title: '', message: response.data.message});
+          setShowErrorAlert(true);
           showApiLoading(false);
         }
       } catch (error: any) {
         showApiLoading(false);
-        Alert.alert(error.response.data.error);
+        setMessage({
+          title: "Something's Not Right",
+          message: error.response.data.error,
+        });
+        setShowErrorAlert(true);
       }
     }
   };
@@ -65,6 +75,18 @@ const ForgotScreen: React.FC<Props> = ({navigation}) => {
           onBlur={() => {
             setIsEmailFocused(false);
           }}
+        />
+        <RAlert
+          title="Something's Not Right"
+          message="Please enter a valid email address."
+          showAlert={showValidationAlert}
+          setShowAlert={setShowValidationAlert}
+        />
+        <RAlert
+          title={message.title}
+          message={message.message}
+          showAlert={showErrorAlert}
+          setShowAlert={setShowErrorAlert}
         />
       </View>
     );
