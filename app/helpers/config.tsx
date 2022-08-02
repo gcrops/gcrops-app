@@ -9,14 +9,12 @@ const commonConfig = {};
 
 const prodConfig = {
   ...commonConfig,
-  API_BASE_URL:
-    'http://ec2co-ecsel-1lpo5nl6bevwe-415313096.ap-south-1.elb.amazonaws.com',
+  API_BASE_URL: 'https://icrops.globalbiomeservices.com',
 };
 
 const developmentConfig = {
   ...commonConfig,
-  API_BASE_URL:
-    'http://ec2co-ecsel-1lpo5nl6bevwe-415313096.ap-south-1.elb.amazonaws.com',
+  API_BASE_URL: 'https://icrops.globalbiomeservices.com',
 };
 
 const AppConfig =

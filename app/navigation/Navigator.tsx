@@ -48,13 +48,12 @@ const TabNavigator = () => {
       initialRouteName="Home"
       screenOptions={{
         tabBarIconStyle: {marginTop: 6},
-        headerShown: false,
       }}>
       <Tab.Screen
         name="Home"
         component={HomeScreen}
         options={{
-          headerTitle: 'Home',
+          headerTitle: 'ICRISAT - iCrops',
           tabBarLabel: '',
           tabBarIcon: ({color, size}) => (
             <Icon name="home" color={color} size={size} />
@@ -65,7 +64,7 @@ const TabNavigator = () => {
         name="Map Plotting"
         component={MapPlottingScreen}
         options={{
-          headerTitle: 'map-marker',
+          headerTitle: 'Past Pointers',
           tabBarLabel: '',
           tabBarIcon: ({color, size}) => (
             <Icon name="map-marker" color={color} size={size} />
@@ -87,7 +86,7 @@ const TabNavigator = () => {
         name="Help"
         component={HelpScreen}
         options={{
-          headerTitle: 'My Profile',
+          headerTitle: 'Help',
           tabBarLabel: '',
           tabBarIcon: ({color, size}) => (
             <Icon name="info" color={color} size={size} />
