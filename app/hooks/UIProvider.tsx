@@ -1,10 +1,17 @@
 import React, {createContext, useContext, useEffect, useState} from 'react';
 import NetInfo from '@react-native-community/netinfo';
 import {ActivityIndicator, StyleSheet, View} from 'react-native';
-import {getAuthorization} from '../networking/Client';
+import {getAuthorization, setAuthorization} from '../networking';
+import {RPermissions} from '../components';
+import Geolocation from 'react-native-geolocation-service';
+import {LandingScreen} from '../screens/LandingScreen';
+import {getCollectedData} from '../networking/Client';
 
 const UIContext = createContext({
   showApiLoading: (_value: boolean) => {
+    return;
+  },
+  showLandingScreen: (_value: boolean) => {
     return;
   },
   netConnection: false,
@@ -17,6 +24,21 @@ const UIContext = createContext({
     signIn: (data: any) => Promise<void>;
     signOut: () => void;
   },
+  collectedData: [] as (
+    | {
+        type: string;
+        value: string;
+        content: Geolocation.GeoPosition[];
+      }
+    | {
+        type: string;
+        value: string;
+        content: String[];
+      }
+  )[][],
+  allCollectedData: (_value: any) => {
+    return;
+  },
 });
 
 type UIProviderProps = {
@@ -25,7 +47,21 @@ type UIProviderProps = {
 
 export const UIProvider = (props: UIProviderProps) => {
   const [apiLoading, setApiLoading] = useState<boolean>(false);
+  const [loadingLandingScreen, setLoadingLandingScreen] =
+    useState<boolean>(true);
   const [isConnected, setIsConnected] = useState<boolean>(true);
+  const [collectedDataObjs, setCollectedDataObjs] = useState([]);
+
+  const getPastSyncData = async () => {
+    const result = await getCollectedData();
+    console.log('result', result.data);
+    setCollectedDataObjs(result.data);
+  };
+
+  useEffect(() => {
+    getPastSyncData();
+  }, []);
+
   const [state, dispatch] = React.useReducer(
     (prevState: any, action: {type: any; token: any}) => {
       switch (action.type) {
@@ -56,11 +92,23 @@ export const UIProvider = (props: UIProviderProps) => {
     },
   );
 
+  const renderLoader = () => {
+    return <LandingScreen />;
+  };
+
+  const authorization = async () => {
+    const response = await getAuthorization();
+    if (response?.accessToken) {
+      setAuthorization(response.accessToken);
+    }
+  };
+
   useEffect(() => {
     const networkStatus = NetInfo.addEventListener(netState => {
       setIsConnected(netState.isConnected || false);
     });
-
+    RPermissions();
+    authorization();
     return () => {
       networkStatus();
     };
@@ -72,7 +120,7 @@ export const UIProvider = (props: UIProviderProps) => {
 
   const authContext = React.useMemo(
     () => ({
-      signIn: async data => {
+      signIn: async (data: string) => {
         dispatch({type: 'SIGN_IN', token: data});
       },
       signOut: () => dispatch({type: 'SIGN_OUT', token: ''}),
@@ -106,11 +154,15 @@ export const UIProvider = (props: UIProviderProps) => {
     <UIContext.Provider
       value={{
         showApiLoading: setApiLoading,
+        showLandingScreen: setLoadingLandingScreen,
         netConnection: isConnected,
         authState: state,
         authDispatch: authContext,
+        allCollectedData: setCollectedDataObjs,
+        collectedData: collectedDataObjs,
       }}>
       {apiLoading ? renderApiLoader() : null}
+      {loadingLandingScreen ? renderLoader() : null}
       {props.children}
     </UIContext.Provider>
   );

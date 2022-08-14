@@ -12,8 +12,11 @@ import {
 } from '@app/app/components';
 import {useUIElements} from '@app/app/hooks/UIProvider';
 import {validateEmail} from '@app/app/resources/validations';
-import {loginUser} from '@app/app/networking';
-import {saveAuthorization} from '@app/app/networking/Client';
+import {
+  loginUser,
+  saveAuthorization,
+  setAuthorization,
+} from '@app/app/networking';
 import {Colors, Fonts} from '@app/app/theme';
 
 interface NavigationProps {
@@ -43,6 +46,7 @@ const LoginScreen: React.FC<Props> = ({navigation}) => {
           showApiLoading(true);
           const response = await loginUser(email, password);
           saveAuthorization(response.data.access_token);
+          setAuthorization(response.data.access_token);
           authDispatch.signIn(response.data.access_token);
           showApiLoading(false);
         }
