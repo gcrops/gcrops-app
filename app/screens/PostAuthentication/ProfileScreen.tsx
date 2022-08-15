@@ -1,8 +1,8 @@
 import {StyleSheet, View} from 'react-native';
 import React from 'react';
 import {RButton, RKeyboardAvoidingView} from '@app/app/components';
-import {removeAuthorization} from '@app/app/networking/Client';
 import {useUIElements} from '@app/app/hooks/UIProvider';
+import {removeAuthorization} from '@app/app/networking';
 
 const ProfileScreen = () => {
   const {netConnection, showApiLoading, authDispatch} = useUIElements();
