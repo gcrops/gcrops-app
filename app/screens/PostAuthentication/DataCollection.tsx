@@ -284,6 +284,7 @@ const DataCollection: React.FC<Props> = ({navigation}) => {
               message="Please collect data."
               showAlert={showValidationAlert}
               setShowAlert={setShowValidationAlert}
+              confirmationText={'OK'}
             />
           </View>
         </View>

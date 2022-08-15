@@ -81,12 +81,15 @@ const ForgotScreen: React.FC<Props> = ({navigation}) => {
           message="Please enter a valid email address."
           showAlert={showValidationAlert}
           setShowAlert={setShowValidationAlert}
+          confirmationText={'OK'}
         />
         <RAlert
           title={message.title}
           message={message.message}
           showAlert={showErrorAlert}
           setShowAlert={setShowErrorAlert}
+          confirmationText={'OK'}
+          onConfirmPressed={() => navigation.pop()}
         />
       </View>
     );

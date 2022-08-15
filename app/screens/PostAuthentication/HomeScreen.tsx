@@ -32,6 +32,7 @@ const HomeScreen: React.FC<Props> = ({navigation}) => {
   const {netConnection, showApiLoading, collectedData, allCollectedData} =
     useUIElements();
   const [showValidationAlert, setShowValidationAlert] = useState(false);
+  const [showSyncAlert, setShowSyncAlert] = useState(false);
 
   const [metaObj, setMetaObj] = useState<Meta>();
 
@@ -80,6 +81,7 @@ const HomeScreen: React.FC<Props> = ({navigation}) => {
             longitude: String(item[1].content[0].coords.longitude),
           },
         });
+        setShowSyncAlert(true);
         allCollectedData([]);
       });
     } else {
@@ -99,6 +101,14 @@ const HomeScreen: React.FC<Props> = ({navigation}) => {
           message="All the data is Synced."
           showAlert={showValidationAlert}
           setShowAlert={setShowValidationAlert}
+          confirmationText={'OK'}
+        />
+        <RAlert
+          title="Successful"
+          message="Data is successfully synced to data base."
+          showAlert={showSyncAlert}
+          setShowAlert={setShowSyncAlert}
+          confirmationText={'OK'}
         />
         <View>
           <RButton
