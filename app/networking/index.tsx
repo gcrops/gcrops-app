@@ -1,5 +1,24 @@
 import {client} from './Client';
 import {createUser, loginUser, forgotPassword} from './Authentication';
-import {helpData, metaData} from './PostAuthentication';
+import {helpData, metaData, base64ToURL, collect} from './PostAuthentication';
+import {
+  saveAuthorization,
+  setAuthorization,
+  getAuthorization,
+  removeAuthorization,
+} from './Client';
 
-export {client, createUser, loginUser, forgotPassword, helpData, metaData};
+export {
+  client,
+  createUser,
+  loginUser,
+  forgotPassword,
+  helpData,
+  metaData,
+  base64ToURL,
+  saveAuthorization,
+  getAuthorization,
+  setAuthorization,
+  removeAuthorization,
+  collect,
+};

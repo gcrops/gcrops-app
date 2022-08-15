@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {DefaultTheme, NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
@@ -9,13 +9,13 @@ import {
   SignupScreen,
 } from '../screens/Authentication';
 import {
+  DataCollection,
   HelpScreen,
   HomeScreen,
   MapPlottingScreen,
   ProfileScreen,
 } from '../screens/PostAuthentication';
 import {Colors} from '../theme';
-import {getAuthorization} from '../networking/Client';
 import {LandingScreen} from '../screens/LandingScreen';
 import {useUIElements} from '../hooks/UIProvider';
 
@@ -24,6 +24,14 @@ export type RootStackParamList = {
   ForgotPassword: undefined;
   SignupScreen: undefined;
   TabHome: undefined;
+};
+
+export type HomeStackParamList = {
+  HomeScreen: undefined;
+  DataCollection: undefined;
+  HelpScreen: undefined;
+  MapPlottingScreen: undefined;
+  ProfileScreen: undefined;
 };
 
 const Tab = createBottomTabNavigator();
@@ -51,10 +59,10 @@ const TabNavigator = () => {
       }}>
       <Tab.Screen
         name="Home"
-        component={HomeScreen}
+        component={HomeStackNavigator}
         options={{
-          headerTitle: 'ICRISAT - iCrops',
           tabBarLabel: '',
+          headerShown: false,
           tabBarIcon: ({color, size}) => (
             <Icon name="home" color={color} size={size} />
           ),
@@ -101,8 +109,9 @@ const HomeStackNavigator = () => {
   return (
     <HomeStack.Navigator
       initialRouteName="HomeScreen"
-      screenOptions={{headerShown: false}}>
-      <HomeStack.Screen name="HomeScreen" component={HomeScreen} />
+      screenOptions={{animation: 'slide_from_right'}}>
+      <HomeStack.Screen name="ICRISAT - iCrops" component={HomeScreen} />
+      <HomeStack.Screen name="DataCollection" component={DataCollection} />
     </HomeStack.Navigator>
   );
 };

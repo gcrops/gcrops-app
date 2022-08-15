@@ -15,7 +15,7 @@ const RKeyboardAvoidingView: React.FC<Props> = ({children}) => {
   return (
     <SafeAreaView style={styles.mainContainer}>
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height+50'}
         style={styles.container}>
         <ScrollView
           showsVerticalScrollIndicator={false}
