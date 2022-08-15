@@ -8,11 +8,15 @@ const RAlert = ({
   title,
   message,
   setShowAlert,
+  confirmationText,
+  onConfirmPressed,
 }: {
   showAlert: boolean;
   title: string;
   message: string;
   setShowAlert: React.Dispatch<React.SetStateAction<boolean>>;
+  confirmationText: string;
+  onConfirmPressed?: () => void;
 }) => {
   return (
     <AwesomeAlert
@@ -23,10 +27,15 @@ const RAlert = ({
       closeOnTouchOutside={false}
       closeOnHardwareBackPress={false}
       showConfirmButton={true}
-      confirmText="Ok"
+      confirmText={confirmationText}
       confirmButtonColor={Colors.primary}
       onConfirmPressed={() => {
-        setShowAlert(false);
+        if (onConfirmPressed !== undefined) {
+          onConfirmPressed();
+          setShowAlert(false);
+        } else {
+          setShowAlert(false);
+        }
       }}
     />
   );

@@ -3,6 +3,7 @@ import {RootObject as Help} from '@app/app/networking/types/Help';
 import {RootObject as Meta} from '@app/app/networking/types/Meta';
 import {RootObject as Base64ToURL} from '@app/app/networking/types/Base64ToURL';
 import {RootObject as Collect} from '@app/app/networking/types/Collect';
+import {RootObject as Coordinates} from '@app/app/networking/types/Coordinates';
 import {client} from '@app/app/networking';
 
 export const helpData = (): AxiosPromise<Help> => {
@@ -16,6 +17,12 @@ export const metaData = (): AxiosPromise<Meta> => {
   return client({
     method: 'get',
     url: '/meta',
+  });
+};
+export const mapData = (): AxiosPromise<Coordinates> => {
+  return client({
+    method: 'get',
+    url: '/locations',
   });
 };
 
