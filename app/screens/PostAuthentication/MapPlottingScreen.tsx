@@ -1,4 +1,4 @@
-import {StyleSheet, View} from 'react-native';
+import {StyleSheet, Text, View} from 'react-native';
 import MapView, {PROVIDER_GOOGLE, Marker, LatLng} from 'react-native-maps';
 import React, {useEffect, useState} from 'react';
 import {useUIElements} from '@app/app/hooks/UIProvider';
@@ -27,7 +27,7 @@ const MapPlottingScreen = () => {
   }, []);
   return (
     <View style={styles.container}>
-      {locationArray[0] !== undefined && (
+      {locationArray[0] !== undefined ? (
         <MapView
           provider={PROVIDER_GOOGLE}
           style={styles.map}
@@ -47,6 +47,10 @@ const MapPlottingScreen = () => {
             />
           ))}
         </MapView>
+      ) : (
+        <View style={{justifyContent: 'center', alignItems: 'center'}}>
+          <Text>Not even single location data is colledted.</Text>
+        </View>
       )}
     </View>
   );
