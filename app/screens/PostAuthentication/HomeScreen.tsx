@@ -70,22 +70,27 @@ const HomeScreen: React.FC<Props> = ({navigation}) => {
     }
   };
 
-  const CollectApiCall = () => {
+  const collectApiCall = () => {
     if (collectedData.length !== 0) {
-      collectedData.map(async item => {
-        await collect({
-          images: item[0].content,
-          landCoverType: String(item[2].content),
-          location: {
-            latitude: String(item[1].content[0].coords.latitude),
-            longitude: String(item[1].content[0].coords.longitude),
-          },
+      try {
+        collectedData.map(async item => {
+          showApiLoading(true);
+          await collect({
+            images: item[0].content,
+            landCoverType: String(item[2].content),
+            location: {
+              latitude: String(item[1].content[0].coords.latitude),
+              longitude: String(item[1].content[0].coords.longitude),
+            },
+          });
+          allCollectedData([]);
+          setShowSyncAlert(true);
+          showApiLoading(false);
         });
-        setShowSyncAlert(true);
-        allCollectedData([]);
-      });
-    } else {
-      setShowValidationAlert(true);
+      } catch (error) {
+        console.log('error collect', error);
+        showApiLoading(false);
+      }
     }
   };
 
@@ -117,7 +122,12 @@ const HomeScreen: React.FC<Props> = ({navigation}) => {
               navigation.navigate('DataCollection');
             }}
           />
-          <RButton title="Sync Data" handleClick={() => CollectApiCall()} />
+          <RButton
+            title="Sync Data"
+            handleClick={() => {
+              collectApiCall();
+            }}
+          />
         </View>
 
         <View>

@@ -8,7 +8,6 @@ import {
   RSeperator,
 } from '@app/app/components';
 import {useUIElements} from '@app/app/hooks/UIProvider';
-import {base64ToURL} from '@app/app/networking';
 import Geolocation, {GeoPosition} from 'react-native-geolocation-service';
 import {Colors, Fonts} from '@app/app/theme';
 import {Picker} from '@react-native-picker/picker';
@@ -26,7 +25,7 @@ interface NavigationProps {
 interface Props extends NavigationProps {}
 
 const DataCollection: React.FC<Props> = ({navigation}) => {
-  const {netConnection, showApiLoading, allCollectedData} = useUIElements();
+  const {allCollectedData} = useUIElements();
   const [image, setImage] = useState<
     {
       uri: string;
@@ -78,25 +77,10 @@ const DataCollection: React.FC<Props> = ({navigation}) => {
     }
   };
 
-  const base64ToURLApiCall = async (data: string) => {
-    if (netConnection) {
-      try {
-        showApiLoading(true);
-        let response = await base64ToURL(data);
-        setImageArray([...imageArray, response.data.link]);
-        showApiLoading(false);
-      } catch (error) {
-        console.log('error', error);
-        showApiLoading(false);
-      }
-    }
-  };
-
   const location = async () => {
     try {
       const result = await Geolocation.getCurrentPosition(
         position => {
-          console.log('position', position);
           setLocationData([position]);
         },
         error => {
@@ -129,7 +113,7 @@ const DataCollection: React.FC<Props> = ({navigation}) => {
               ? [...existingData, {uri: source.uri!}]
               : [{uri: source.uri!}],
           );
-          base64ToURLApiCall(response.assets?.[0].base64!);
+          setImageArray([...imageArray, response.assets?.[0].base64!]);
         }
       },
     );

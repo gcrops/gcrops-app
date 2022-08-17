@@ -39,7 +39,7 @@ export const collect = ({
   landCoverType,
   location,
 }: {
-  images: [string];
+  images: string[];
   landCoverType: string;
   location: {latitude: string; longitude: string};
 }): AxiosPromise<Collect> => {
