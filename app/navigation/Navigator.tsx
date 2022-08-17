@@ -71,9 +71,13 @@ const TabNavigator = () => {
       <Tab.Screen
         name="Map Plotting"
         component={MapPlottingScreen}
+        listeners={({navigation}) => ({
+          blur: () => navigation.setParams({screen: undefined}),
+        })}
         options={{
           headerTitle: 'Past Pointers',
           tabBarLabel: '',
+          unmountOnBlur: true,
           tabBarIcon: ({color, size}) => (
             <Icon name="map-marker" color={color} size={size} />
           ),

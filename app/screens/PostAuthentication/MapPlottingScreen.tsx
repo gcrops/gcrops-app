@@ -23,7 +23,6 @@ const MapPlottingScreen = () => {
 
   useEffect(() => {
     getLocationCoordinatesApi();
-    console.log('locationArray', locationArray);
   }, []);
   return (
     <View style={styles.container}>
@@ -48,7 +47,7 @@ const MapPlottingScreen = () => {
           ))}
         </MapView>
       ) : (
-        <View style={{justifyContent: 'center', alignItems: 'center'}}>
+        <View style={{justifyContent: 'center', alignSelf: 'center', flex: 1}}>
           <Text>Not even single location data is colledted.</Text>
         </View>
       )}

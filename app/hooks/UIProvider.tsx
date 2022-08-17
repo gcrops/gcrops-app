@@ -33,7 +33,7 @@ const UIContext = createContext({
     | {
         type: string;
         value: string;
-        content: String[];
+        content: string[];
       }
   )[][],
   allCollectedData: (_value: any) => {
@@ -53,9 +53,13 @@ export const UIProvider = (props: UIProviderProps) => {
   const [collectedDataObjs, setCollectedDataObjs] = useState([]);
 
   const getPastSyncData = async () => {
-    const result = await getCollectedData();
-    console.log('result', result.data);
-    setCollectedDataObjs(result.data);
+    try {
+      const result = await getCollectedData();
+      setCollectedDataObjs(result.data);
+    } catch (error) {
+      setCollectedDataObjs([]);
+      console.log('error', error);
+    }
   };
 
   useEffect(() => {
