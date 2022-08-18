@@ -232,19 +232,20 @@ const DataCollection: React.FC<Props> = ({navigation}) => {
     );
   };
 
-  const handleSave = async () => {
-    try {
-      {
-        if (qualityControlList?.[0].content.length !== 0) {
-          allCollectedData(prevData => [...prevData, qualityControlList]);
-          navigation.pop();
-        } else {
-          setShowValidationAlert(true);
-        }
-      }
-    } catch (error) {
-      console.log('error', error);
+  const handleSave = () => {
+    if (
+      qualityControlList[0].content.length !== 0 &&
+      qualityControlList[1].content.length !== 0 &&
+      qualityControlList[2].content.length !== 0
+    ) {
+      allCollectedData(prevData => [...prevData, qualityControlList]);
+      navigation.pop();
+    } else {
+      setShowValidationAlert(true);
     }
+
+    // (allCollectedData(prevData => [...prevData, qualityControlList]),
+    //   navigation.pop())
   };
 
   return (

@@ -33,6 +33,8 @@ const HomeScreen: React.FC<Props> = ({navigation}) => {
     useUIElements();
   const [showValidationAlert, setShowValidationAlert] = useState(false);
   const [showSyncAlert, setShowSyncAlert] = useState(false);
+  const [showAllDataSynced, setShowAllDataSynced] = useState(false);
+  const [showNoInternetAlert, setShowNoInternetAlert] = useState(false);
 
   const [metaObj, setMetaObj] = useState<Meta>();
 
@@ -71,26 +73,32 @@ const HomeScreen: React.FC<Props> = ({navigation}) => {
   };
 
   const collectApiCall = () => {
-    if (collectedData.length !== 0) {
-      try {
-        collectedData.map(async item => {
-          showApiLoading(true);
-          await collect({
-            images: item[0].content,
-            landCoverType: String(item[2].content),
-            location: {
-              latitude: String(item[1].content[0].coords.latitude),
-              longitude: String(item[1].content[0].coords.longitude),
-            },
+    if (netConnection) {
+      if (collectedData.length !== 0) {
+        try {
+          collectedData.map(async item => {
+            showApiLoading(true);
+            await collect({
+              images: item[0].content,
+              landCoverType: String(item[2].content),
+              location: {
+                latitude: String(item[1].content[0].coords.latitude),
+                longitude: String(item[1].content[0].coords.longitude),
+              },
+            });
+            allCollectedData([]);
+            setShowSyncAlert(true);
+            showApiLoading(false);
           });
-          allCollectedData([]);
-          setShowSyncAlert(true);
+        } catch (error) {
+          console.log('error collect', error);
           showApiLoading(false);
-        });
-      } catch (error) {
-        console.log('error collect', error);
-        showApiLoading(false);
+        }
+      } else {
+        setShowAllDataSynced(true);
       }
+    } else {
+      setShowNoInternetAlert(true);
     }
   };
 
@@ -113,6 +121,20 @@ const HomeScreen: React.FC<Props> = ({navigation}) => {
           message="Data is successfully synced to data base."
           showAlert={showSyncAlert}
           setShowAlert={setShowSyncAlert}
+          confirmationText={'OK'}
+        />
+        <RAlert
+          title="Something's Not Right"
+          message="Please connect to internet before trying to sync."
+          showAlert={showNoInternetAlert}
+          setShowAlert={setShowNoInternetAlert}
+          confirmationText={'OK'}
+        />
+        <RAlert
+          title="Something's Not Right"
+          message="No data to sync."
+          showAlert={showAllDataSynced}
+          setShowAlert={setShowAllDataSynced}
           confirmationText={'OK'}
         />
         <View>
