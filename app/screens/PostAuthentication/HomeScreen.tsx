@@ -76,7 +76,7 @@ const HomeScreen: React.FC<Props> = ({navigation}) => {
     if (netConnection) {
       if (collectedData.length !== 0) {
         try {
-          collectedData.map(async item => {
+          collectedData.map(async (item, index) => {
             showApiLoading(true);
             await collect({
               images: item[0].content,
@@ -86,7 +86,9 @@ const HomeScreen: React.FC<Props> = ({navigation}) => {
                 longitude: String(item[1].content[0].coords.longitude),
               },
             });
-            allCollectedData([]);
+            if (collectedData.length === index + 1) {
+              allCollectedData([]);
+            }
             setShowSyncAlert(true);
             showApiLoading(false);
           });
