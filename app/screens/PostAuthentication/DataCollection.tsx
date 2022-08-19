@@ -99,6 +99,7 @@ const DataCollection: React.FC<Props> = ({navigation}) => {
       {
         mediaType: 'photo',
         includeBase64: true,
+        quality: 0.1,
       },
       response => {
         // Use launchImageLibrary to open image gallery
