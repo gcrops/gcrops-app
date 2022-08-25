@@ -20,6 +20,7 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {HomeStackParamList} from '@app/app/navigation/Navigator';
 import {RouteProp} from '@react-navigation/native';
 import {saveCollectedData} from '@app/app/networking/Client';
+import RNFS from 'react-native-fs';
 
 interface NavigationProps {
   navigation: NativeStackNavigationProp<HomeStackParamList, 'HomeScreen'>;
@@ -37,6 +38,7 @@ const HomeScreen: React.FC<Props> = ({navigation}) => {
   const [showNoInternetAlert, setShowNoInternetAlert] = useState(false);
 
   const [metaObj, setMetaObj] = useState<Meta>();
+  const [base64Array, setBase64Array] = useState<string[]>([]);
 
   const handleAppStateChange = async (appState: AppStateStatus) => {
     switch (appState) {
@@ -72,14 +74,31 @@ const HomeScreen: React.FC<Props> = ({navigation}) => {
     }
   };
 
-  const collectApiCall = () => {
+  const stringToBase64 = async item => {
+    setBase64Array([]);
+    for (let j = 0; j < item[0].content.length; j++) {
+      const destiny = item[0].content[j];
+      console.log('destiny', destiny);
+      const base64Value = await RNFS.readFile(destiny, 'base64');
+      setBase64Array([...base64Array, base64Value]);
+    }
+  };
+
+  const collectApiCall = async () => {
     if (netConnection) {
       if (collectedData.length !== 0) {
         try {
+          for (let i = 0; i < collectedData.length; i++) {
+            console.log('base64Array.length', base64Array.length);
+            const element = collectedData[i];
+            console.log('image data', element[0].content);
+            await stringToBase64(element);
+          }
           collectedData.map(async (item, index) => {
             showApiLoading(true);
+            console.log('base64Array.length', base64Array.length);
             await collect({
-              images: item[0].content,
+              images: base64Array,
               landCoverType: String(item[2].content),
               location: {
                 latitude: String(item[1].content[0].coords.latitude),
@@ -150,6 +169,7 @@ const HomeScreen: React.FC<Props> = ({navigation}) => {
             title="Sync Data"
             handleClick={() => {
               collectApiCall();
+              // stringToBase64();
             }}
           />
         </View>

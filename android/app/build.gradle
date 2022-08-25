@@ -269,6 +269,8 @@ android {
 
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
+    
+    implementation project(':react-native-fs')
 
     implementation platform('com.google.firebase:firebase-bom:30.3.0')
     

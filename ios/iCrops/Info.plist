@@ -83,6 +83,8 @@
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<key>NSCameraUsageDescription</key>
     <string>Our app need your permission to use your camera phone</string>
+		<key>NSPhotoLibraryUsageDescription</key>
+		<string>Our app need your permission to use your storage</string>
 	<false/>
 </dict>
 </plist>
