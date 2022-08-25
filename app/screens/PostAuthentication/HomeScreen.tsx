@@ -20,6 +20,7 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {HomeStackParamList} from '@app/app/navigation/Navigator';
 import {RouteProp} from '@react-navigation/native';
 import {saveCollectedData} from '@app/app/networking/Client';
+import RNFS from 'react-native-fs';
 
 interface NavigationProps {
   navigation: NativeStackNavigationProp<HomeStackParamList, 'HomeScreen'>;
@@ -37,6 +38,7 @@ const HomeScreen: React.FC<Props> = ({navigation}) => {
   const [showNoInternetAlert, setShowNoInternetAlert] = useState(false);
 
   const [metaObj, setMetaObj] = useState<Meta>();
+  const [base64Array, setBase64Array] = useState<string[]>([]);
 
   const handleAppStateChange = async (appState: AppStateStatus) => {
     switch (appState) {
@@ -59,49 +61,62 @@ const HomeScreen: React.FC<Props> = ({navigation}) => {
   }, [collectedData]);
 
   const metaApiCall = async () => {
-    if (netConnection) {
-      try {
-        showApiLoading(true);
-        let response = await metaData();
-        setMetaObj(response.data);
-        showApiLoading(false);
-      } catch (error) {
-        console.log('error', error);
-        showApiLoading(false);
-      }
+    if (!netConnection) {
+      return;
     }
+    showApiLoading(true);
+    try {
+      let response = await metaData();
+      setMetaObj(response.data);
+    } catch (error) {
+      console.log('error', error);
+    }
+    showApiLoading(false);
   };
 
-  const collectApiCall = () => {
-    if (netConnection) {
-      if (collectedData.length !== 0) {
-        try {
-          collectedData.map(async (item, index) => {
-            showApiLoading(true);
-            await collect({
-              images: item[0].content,
-              landCoverType: String(item[2].content),
-              location: {
-                latitude: String(item[1].content[0].coords.latitude),
-                longitude: String(item[1].content[0].coords.longitude),
-              },
-            });
-            if (collectedData.length === index + 1) {
-              allCollectedData([]);
-            }
-            setShowSyncAlert(true);
-            showApiLoading(false);
-          });
-        } catch (error) {
-          console.log('error collect', error);
-          showApiLoading(false);
-        }
-      } else {
-        setShowAllDataSynced(true);
-      }
-    } else {
-      setShowNoInternetAlert(true);
+  const stringToBase64 = async item => {
+    const returnValue: string[] = [];
+    for (let j = 0; j < item[0].content.length; j++) {
+      const destiny = item[0].content[j];
+      const base64Value = await RNFS.readFile(destiny, 'base64');
+      returnValue.push(base64Value);
     }
+    return returnValue;
+  };
+  const uploadSession = async (session: any) => {
+    //RoadMap
+    //1. First collect the images in the disk and convert them into js array objects
+    //2. Second upload the images with other meta objects
+    const images = await stringToBase64(session);
+    await collect({
+      images: images,
+      landCoverType: String(session[2].content),
+      location: {
+        latitude: String(session[1].content[0].coords.latitude),
+        longitude: String(session[1].content[0].coords.longitude),
+      },
+    });
+  };
+  const collectApiCall = async () => {
+    if (!netConnection) {
+      setShowNoInternetAlert(true);
+      return;
+    }
+    if (collectedData.length === 0) {
+      setShowAllDataSynced(true);
+      return;
+    }
+    showApiLoading(true);
+    try {
+      for (const session of collectedData) {
+        await uploadSession(session);
+      }
+      setShowSyncAlert(true);
+      allCollectedData([]);
+    } catch (error) {
+      console.log('error collect', error);
+    }
+    showApiLoading(false);
   };
 
   useEffect(() => {
@@ -150,6 +165,7 @@ const HomeScreen: React.FC<Props> = ({navigation}) => {
             title="Sync Data"
             handleClick={() => {
               collectApiCall();
+              // stringToBase64();
             }}
           />
         </View>

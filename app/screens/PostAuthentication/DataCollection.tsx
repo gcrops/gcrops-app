@@ -16,6 +16,7 @@ import {FloatingLabelInput} from 'react-native-floating-label-input';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {HomeStackParamList} from '@app/app/navigation/Navigator';
 import {RouteProp} from '@react-navigation/native';
+import RNFS from 'react-native-fs';
 
 interface NavigationProps {
   navigation: NativeStackNavigationProp<HomeStackParamList, 'DataCollection'>;
@@ -100,6 +101,7 @@ const DataCollection: React.FC<Props> = ({navigation}) => {
         mediaType: 'photo',
         includeBase64: true,
         quality: 0.1,
+        // saveToPhotos: true,
       },
       response => {
         // Use launchImageLibrary to open image gallery
@@ -109,12 +111,26 @@ const DataCollection: React.FC<Props> = ({navigation}) => {
           console.log('ImagePicker Error: ', response.errorMessage);
         } else {
           const source = {uri: response.assets?.[0].uri};
+
+          const destiny =
+            RNFS.PicturesDirectoryPath +
+            '/iCrops/' +
+            `${response.assets?.[0].fileName}`;
+
           setImage(existingData =>
             existingData !== []
               ? [...existingData, {uri: source.uri!}]
               : [{uri: source.uri!}],
           );
-          setImageArray([...imageArray, response.assets?.[0].base64!]);
+
+          RNFS.moveFile(source.uri!, destiny)
+            .then(() => {
+              console.log('file moved!');
+              setImageArray([...imageArray, destiny]);
+            })
+            .catch(err => {
+              console.log('Error: ' + err.message);
+            });
         }
       },
     );

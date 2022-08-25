@@ -27,6 +27,7 @@
     "react-native": "0.69.1",
     "react-native-awesome-alerts": "^2.0.0",
     "react-native-floating-label-input": "^1.4.2",
+    "react-native-fs": "^2.20.0",
     "react-native-geolocation-service": "^5.3.0",
     "react-native-gesture-handler": "^2.5.0",
     "react-native-image-picker": "^4.8.4",
