@@ -38,27 +38,27 @@ const LoginScreen: React.FC<Props> = ({navigation}) => {
   const [message, setMessage] = useState({title: '', message: ''});
 
   const loginPressed = async () => {
-    if (netConnection) {
-      try {
-        if (!validateEmail(email)) {
-          setShowValidationAlert(true);
-        } else {
-          showApiLoading(true);
-          const response = await loginUser(email, password);
-          saveAuthorization(response.data.access_token);
-          setAuthorization(response.data.access_token);
-          authDispatch.signIn(response.data.access_token);
-          showApiLoading(false);
-        }
-      } catch (error: any) {
-        setMessage({
-          title: "Something's Not Right",
-          message: error.response.data.error,
-        });
-        setShowErrorAlert(true);
-        showApiLoading(false);
-      }
+    if (!netConnection) {
+      return;
     }
+    if (!validateEmail(email)) {
+      setShowValidationAlert(true);
+      return;
+    }
+    showApiLoading(true);
+    try {
+      const response = await loginUser(email, password);
+      saveAuthorization(response.data.access_token);
+      setAuthorization(response.data.access_token);
+      authDispatch.signIn(response.data.access_token);
+    } catch (error: any) {
+      setMessage({
+        title: "Something's Not Right",
+        message: error.response.data.error,
+      });
+      setShowErrorAlert(true);
+    }
+    showApiLoading(false);
   };
 
   const formView = () => {
