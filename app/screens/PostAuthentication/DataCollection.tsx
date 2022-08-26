@@ -1,4 +1,12 @@
-import {Image, StyleSheet, View, ScrollView, Text, Switch} from 'react-native';
+import {
+  Image,
+  StyleSheet,
+  View,
+  ScrollView,
+  Text,
+  Switch,
+  Alert,
+} from 'react-native';
 import React, {useState} from 'react';
 import {launchCamera} from 'react-native-image-picker';
 import {
@@ -117,9 +125,7 @@ const DataCollection: React.FC<Props> = ({navigation}) => {
         const source = {uri: response.assets[0].uri};
 
         const destiny =
-          RNFS.PicturesDirectoryPath +
-          '/iCrops/' +
-          `${response.assets[0].fileName}`;
+          RNFS.DownloadDirectoryPath + `/${response.assets[0].fileName}`;
 
         setImage(existingData =>
           existingData !== []
@@ -133,7 +139,7 @@ const DataCollection: React.FC<Props> = ({navigation}) => {
             setImageArray([...imageArray, destiny]);
           })
           .catch(err => {
-            console.log('Error: ' + err.message);
+            Alert.alert('Error: ' + err.message);
           });
       },
     );
