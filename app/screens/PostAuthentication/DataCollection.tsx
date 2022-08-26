@@ -121,10 +121,11 @@ const DataCollection: React.FC<Props> = ({navigation}) => {
           '/iCrops/' +
           `${response.assets[0].fileName}`;
 
-        setImage(existingData => {
-          existingData.push({uri: source.uri!});
-          return existingData;
-        });
+        setImage(existingData =>
+          existingData !== []
+            ? [...existingData, {uri: source.uri!}]
+            : [{uri: source.uri!}],
+        );
 
         RNFS.moveFile(source.uri!, destiny)
           .then(() => {
