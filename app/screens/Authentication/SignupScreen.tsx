@@ -34,32 +34,32 @@ const SignupScreen: React.FC<Props> = ({navigation}) => {
   const [message, setMessage] = useState({title: '', message: ''});
 
   const signupPressed = async () => {
-    if (netConnection) {
-      try {
-        if (!validateEmail(email)) {
-          setShowValidationAlert(true);
-        } else {
-          showApiLoading(true);
-          const response = await createUser(
-            email,
-            designation,
-            institute,
-            province,
-            country,
-          );
-          setMessage({title: '', message: response.data.message});
-          setShowErrorAlert(true);
-          showApiLoading(false);
-        }
-      } catch (error: any) {
-        showApiLoading(false);
-        setMessage({
-          title: "Something's Not Right",
-          message: error.response.data.error,
-        });
-        setShowErrorAlert(true);
-      }
+    if (!netConnection) {
+      return;
     }
+    if (!validateEmail(email)) {
+      setShowValidationAlert(true);
+      return;
+    }
+    showApiLoading(true);
+    try {
+      const response = await createUser(
+        email,
+        designation,
+        institute,
+        province,
+        country,
+      );
+      setMessage({title: '', message: response.data.message});
+      setShowErrorAlert(true);
+    } catch (error: any) {
+      setMessage({
+        title: "Something's Not Right",
+        message: error.response.data.error,
+      });
+      setShowErrorAlert(true);
+    }
+    showApiLoading(false);
   };
 
   const iconView = () => {

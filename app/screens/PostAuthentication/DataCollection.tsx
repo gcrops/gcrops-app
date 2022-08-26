@@ -79,20 +79,18 @@ const DataCollection: React.FC<Props> = ({navigation}) => {
   };
 
   const location = async () => {
-    try {
-      const result = await Geolocation.getCurrentPosition(
-        position => {
-          setLocationData([position]);
-        },
-        error => {
-          console.log('error:', error);
-        },
-        {enableHighAccuracy: true, timeout: 15000},
-      );
-      return result;
-    } catch (ex) {
-      console.log('ex', ex);
-    }
+    Geolocation.getCurrentPosition(
+      position => {
+        setLocationData([position]);
+      },
+      error => {
+        console.log('error:', error);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 15000,
+      },
+    );
   };
 
   const selectImage = () => {
@@ -107,31 +105,35 @@ const DataCollection: React.FC<Props> = ({navigation}) => {
         // Use launchImageLibrary to open image gallery
         if (response.didCancel) {
           console.log('User cancelled image picker');
-        } else if (response.errorMessage) {
-          console.log('ImagePicker Error: ', response.errorMessage);
-        } else {
-          const source = {uri: response.assets?.[0].uri};
-
-          const destiny =
-            RNFS.PicturesDirectoryPath +
-            '/iCrops/' +
-            `${response.assets?.[0].fileName}`;
-
-          setImage(existingData =>
-            existingData !== []
-              ? [...existingData, {uri: source.uri!}]
-              : [{uri: source.uri!}],
-          );
-
-          RNFS.moveFile(source.uri!, destiny)
-            .then(() => {
-              console.log('file moved!');
-              setImageArray([...imageArray, destiny]);
-            })
-            .catch(err => {
-              console.log('Error: ' + err.message);
-            });
+          return;
         }
+        if (response.errorMessage) {
+          console.log('ImagePicker Error: ', response.errorMessage);
+          return;
+        }
+        if (!response.assets || response.assets.length === 0) {
+          return;
+        }
+        const source = {uri: response.assets[0].uri};
+
+        const destiny =
+          RNFS.PicturesDirectoryPath +
+          '/iCrops/' +
+          `${response.assets[0].fileName}`;
+
+        setImage(existingData => {
+          existingData.push({uri: source.uri!});
+          return existingData;
+        });
+
+        RNFS.moveFile(source.uri!, destiny)
+          .then(() => {
+            console.log('file moved!');
+            setImageArray([...imageArray, destiny]);
+          })
+          .catch(err => {
+            console.log('Error: ' + err.message);
+          });
       },
     );
   };

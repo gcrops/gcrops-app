@@ -8,17 +8,17 @@ const MapPlottingScreen = () => {
   const {netConnection, showApiLoading} = useUIElements();
   const [locationArray, setLocationArray] = useState<LatLng[]>([]);
   const getLocationCoordinatesApi = async () => {
-    if (netConnection) {
-      try {
-        showApiLoading(true);
-        const result = await mapData();
-        setLocationArray(result.data.data);
-        showApiLoading(false);
-      } catch (error: any) {
-        console.log({error});
-        showApiLoading(false);
-      }
+    if (!netConnection) {
+      return;
     }
+    showApiLoading(true);
+    try {
+      const result = await mapData();
+      setLocationArray(result.data.data);
+    } catch (error: any) {
+      console.log({error});
+    }
+    showApiLoading(false);
   };
 
   useEffect(() => {

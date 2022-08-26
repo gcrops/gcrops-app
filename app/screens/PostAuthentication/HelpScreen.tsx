@@ -10,17 +10,17 @@ const HelpScreen = () => {
   const [helpObj, setHelpObj] = useState<Help[]>();
 
   const helpApiCall = async () => {
-    if (netConnection) {
-      try {
-        showApiLoading(true);
-        let response = await helpData();
-        setHelpObj(response.data.items);
-        showApiLoading(false);
-      } catch (error) {
-        console.log('error', error);
-        showApiLoading(false);
-      }
+    if (!netConnection) {
+      return;
     }
+    showApiLoading(true);
+    try {
+      let response = await helpData();
+      setHelpObj(response.data.items);
+    } catch (error) {
+      console.log('error', error);
+    }
+    showApiLoading(false);
   };
 
   useEffect(() => {

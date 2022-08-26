@@ -7,17 +7,17 @@ import {removeAuthorization} from '@app/app/networking';
 const ProfileScreen = () => {
   const {netConnection, showApiLoading, authDispatch} = useUIElements();
   const logoutPressed = async () => {
-    if (netConnection) {
-      try {
-        showApiLoading(true);
-        await removeAuthorization();
-        authDispatch.signOut();
-        showApiLoading(false);
-      } catch (error: any) {
-        console.log({error});
-        showApiLoading(false);
-      }
+    if (!netConnection) {
+      return;
     }
+    showApiLoading(true);
+    try {
+      await removeAuthorization();
+      authDispatch.signOut();
+    } catch (error: any) {
+      console.log({error});
+    }
+    showApiLoading(false);
   };
 
   return (
