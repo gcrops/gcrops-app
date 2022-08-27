@@ -107,7 +107,7 @@ const DataCollection: React.FC<Props> = ({navigation}) => {
         mediaType: 'photo',
         includeBase64: true,
         quality: 0.1,
-        // saveToPhotos: true,
+        saveToPhotos: true,
       });
       if (response.didCancel) {
         console.log('User cancelled image picker');
@@ -141,6 +141,7 @@ const DataCollection: React.FC<Props> = ({navigation}) => {
       await RNFS.moveFile(uri, destiny);
       setImageArray([...imageArray, destiny]);
     } catch (err) {
+      Alert.alert(err.message);
       console.log(err);
     }
   };
