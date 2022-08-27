@@ -104,7 +104,7 @@ const DataCollection: React.FC<Props> = ({navigation}) => {
     try {
       const response = await launchCamera({
         mediaType: 'photo',
-        includeBase64: true,
+        includeBase64: false,
         quality: 0.1,
         saveToPhotos: true,
       });
@@ -125,7 +125,6 @@ const DataCollection: React.FC<Props> = ({navigation}) => {
         return;
       }
       const uri = response.assets[0].uri;
-      Alert.alert(uri);
       const source = {uri: uri};
       setImage(existingData =>
         existingData !== []
