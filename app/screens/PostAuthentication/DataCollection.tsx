@@ -101,29 +101,34 @@ const DataCollection: React.FC<Props> = ({navigation}) => {
     );
   };
 
-  const selectImage = () => {
-    launchCamera(
-      {
+  const selectImage = async () => {
+    try {
+      const response = await launchCamera({
         mediaType: 'photo',
         includeBase64: true,
         quality: 0.1,
         // saveToPhotos: true,
-      },
-      response => {
-        // Use launchImageLibrary to open image gallery
-        if (response.didCancel) {
-          console.log('User cancelled image picker');
-          return;
-        }
-        if (response.errorMessage) {
-          console.log('ImagePicker Error: ', response.errorMessage);
-          return;
-        }
-        if (!response.assets || response.assets.length === 0) {
-          return;
-        }
-        const source = {uri: response.assets[0].uri};
+      });
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+        return;
+      }
+      if (response.errorMessage) {
+        console.log('ImagePicker Error: ', response.errorMessage);
+        return;
+      }
+      if (
+        !response.assets ||
+        response.assets.length === 0 ||
+        !response.assets[0].uri
+      ) {
+        console.log('response assests issue');
+        return;
+      }
+      const uri = response.assets[0].uri;
+      const source = {uri: uri};
 
+<<<<<<< Updated upstream
         const destiny =
           RNFS.DownloadDirectoryPath + `/${response.assets[0].fileName}`;
 
@@ -143,6 +148,24 @@ const DataCollection: React.FC<Props> = ({navigation}) => {
           });
       },
     );
+=======
+      const destiny =
+        RNFS.DocumentDirectoryPath +
+        '/iCrops/' +
+        `${response.assets[0].fileName}`;
+
+      setImage(existingData =>
+        existingData !== []
+          ? [...existingData, {uri: source.uri!}]
+          : [{uri: source.uri!}],
+      );
+
+      await RNFS.moveFile(uri, destiny);
+      setImageArray([...imageArray, destiny]);
+    } catch (err) {
+      console.log(err);
+    }
+>>>>>>> Stashed changes
   };
 
   const imageView = () => {
