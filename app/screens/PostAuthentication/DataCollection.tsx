@@ -126,6 +126,7 @@ const DataCollection: React.FC<Props> = ({navigation}) => {
         return;
       }
       const uri = response.assets[0].uri;
+      Alert.alert(uri);
       const source = {uri: uri};
       const destiny =
         RNFS.DocumentDirectoryPath +
