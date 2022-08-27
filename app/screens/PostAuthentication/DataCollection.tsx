@@ -24,7 +24,6 @@ import {FloatingLabelInput} from 'react-native-floating-label-input';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {HomeStackParamList} from '@app/app/navigation/Navigator';
 import {RouteProp} from '@react-navigation/native';
-import RNFS from 'react-native-fs';
 
 interface NavigationProps {
   navigation: NativeStackNavigationProp<HomeStackParamList, 'DataCollection'>;
@@ -128,19 +127,12 @@ const DataCollection: React.FC<Props> = ({navigation}) => {
       const uri = response.assets[0].uri;
       Alert.alert(uri);
       const source = {uri: uri};
-      const destiny =
-        RNFS.DocumentDirectoryPath +
-        '/iCrops/' +
-        `${response.assets[0].fileName}`;
-
       setImage(existingData =>
         existingData !== []
           ? [...existingData, {uri: source.uri!}]
           : [{uri: source.uri!}],
       );
-
-      await RNFS.moveFile(uri, destiny);
-      setImageArray([...imageArray, destiny]);
+      setImageArray([...imageArray, uri]);
     } catch (err) {
       Alert.alert(err.message);
       console.log(err);
