@@ -127,28 +127,6 @@ const DataCollection: React.FC<Props> = ({navigation}) => {
       }
       const uri = response.assets[0].uri;
       const source = {uri: uri};
-
-<<<<<<< Updated upstream
-        const destiny =
-          RNFS.DownloadDirectoryPath + `/${response.assets[0].fileName}`;
-
-        setImage(existingData =>
-          existingData !== []
-            ? [...existingData, {uri: source.uri!}]
-            : [{uri: source.uri!}],
-        );
-
-        RNFS.moveFile(source.uri!, destiny)
-          .then(() => {
-            console.log('file moved!');
-            setImageArray([...imageArray, destiny]);
-          })
-          .catch(err => {
-            Alert.alert('Error: ' + err.message);
-          });
-      },
-    );
-=======
       const destiny =
         RNFS.DocumentDirectoryPath +
         '/iCrops/' +
@@ -165,7 +143,6 @@ const DataCollection: React.FC<Props> = ({navigation}) => {
     } catch (err) {
       console.log(err);
     }
->>>>>>> Stashed changes
   };
 
   const imageView = () => {
