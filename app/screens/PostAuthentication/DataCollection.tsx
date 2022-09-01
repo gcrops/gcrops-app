@@ -45,16 +45,96 @@ const DataCollection: React.FC<Props> = ({navigation}) => {
   const [locationData, setLocationData] = useState<GeoPosition[]>([]);
   const [showValidationAlert, setShowValidationAlert] = useState(false);
 
-  const [selectedCategoriesList, setSelectedCategoriesList] = useState<
-    String[]
-  >([]);
+  const [selectedCategoriesList, setSelectedCategoriesList] = useState('');
+
+  const [selectedWaterSource, setSelectedWaterSource] = useState('');
+  const [selectedCropIntensity, setSelectedCropIntensity] = useState('');
+  const [selectedPrimaryCrop, setSelectedPrimaryCrop] = useState('');
+  const [selectedSecondaryCrop, setSelectedSecondaryCrop] = useState('');
+  const [selectedLiveStock, setSelectedLiveStock] = useState('');
+
   const categoriesList = [
     'Select Land Type',
-    'Grassland',
     'Cropland',
-    'Normal',
+    'Forest',
+    'Grassland',
+    'Barren',
+    'Builtup',
+    'Shrub',
   ];
-
+  const croplandTypes = [
+    {keyName: 'Water Source', values: ['Unknown', 'Rainfed', 'Irrigated']},
+    {
+      keyName: 'Crop Intensity',
+      values: ['Unknown', 'Single', 'Double', 'Triple', 'Continuous'],
+    },
+    {
+      keyName: 'Primary Crop',
+      values: [
+        'Unknown',
+        'Pigeonpea',
+        'Chickpea',
+        'Wheat',
+        'Maize(Corn)',
+        'Rice',
+        'Barley',
+        'SoyaBean',
+        'Pulses',
+        'Cotton',
+        'Potatoe',
+        'Alfalfa',
+        'Sorghum',
+        'Millet',
+        'Sunflower',
+        'Rye',
+        'Rapeseed or Canola',
+        'Sugarcane',
+        'Groundnut or Peanut',
+        'Cassava',
+        'Sugarbeet',
+        'Palm',
+        'Plantation',
+        'Fallow',
+        'Tef',
+        'Others',
+      ],
+    },
+    {
+      keyName: 'Secondary Crop',
+      values: [
+        'Unknown',
+        'Pigeonpea',
+        'Chickpea',
+        'Wheat',
+        'Maize(Corn)',
+        'Rice',
+        'Barley',
+        'SoyaBean',
+        'Pulses',
+        'Cotton',
+        'Potatoe',
+        'Alfalfa',
+        'Sorghum',
+        'Millet',
+        'Sunflower',
+        'Rye',
+        'Rapeseed or Canola',
+        'Sugarcane',
+        'Groundnut or Peanut',
+        'Cassava',
+        'Sugarbeet',
+        'Palm',
+        'Plantation',
+        'Fallow',
+        'Tef',
+        'Others',
+      ],
+    },
+    {
+      keyName: 'Live Stock',
+      values: ['Unknown', 'Cows', 'Buffaloes', 'Goats', 'Sheep'],
+    },
+  ];
   const [isAadhaarFocused, setIsAadhaarFocused] = useState(false);
   const [aadhaar, setAadhaar] = useState('');
 
@@ -72,7 +152,19 @@ const DataCollection: React.FC<Props> = ({navigation}) => {
     {
       type: 'landClass',
       value: 'Set land cover class.',
-      content: selectedCategoriesList,
+      content:
+        selectedCategoriesList !== 'Cropland'
+          ? selectedCategoriesList
+          : {
+              locationClass: 'Cropland',
+              cropInfo: {
+                'Water Source': selectedWaterSource,
+                'Crop Intensity': selectedCropIntensity,
+                'Primary Crop': selectedPrimaryCrop,
+                'Secondary Crop': selectedSecondaryCrop,
+                'Live Stock': selectedLiveStock,
+              },
+            },
     },
   ];
 
@@ -213,6 +305,49 @@ const DataCollection: React.FC<Props> = ({navigation}) => {
       </View>
     );
   };
+  const cropInformationView = () => {
+    return (
+      <View>
+        {croplandTypes.map(item => {
+          return (
+            <>
+              <Text style={styles.textHeaderStyle}>{item.keyName}</Text>
+              <Picker
+                selectedValue={
+                  item.keyName === 'Water Source'
+                    ? selectedWaterSource
+                    : item.keyName === 'Crop Intensity'
+                    ? selectedCropIntensity
+                    : item.keyName === 'Primary Crop'
+                    ? selectedPrimaryCrop
+                    : item.keyName === 'Secondary Crop'
+                    ? selectedSecondaryCrop
+                    : selectedLiveStock
+                }
+                onValueChange={itemValue => {
+                  if (itemValue === 'Unknown') {
+                    return;
+                  }
+                  item.keyName === 'Water Source'
+                    ? setSelectedWaterSource(itemValue)
+                    : item.keyName === 'Crop Intensity'
+                    ? setSelectedCropIntensity(itemValue)
+                    : item.keyName === 'Primary Crop'
+                    ? setSelectedPrimaryCrop(itemValue)
+                    : item.keyName === 'Secondary Crop'
+                    ? setSelectedSecondaryCrop(itemValue)
+                    : setSelectedLiveStock(itemValue);
+                }}>
+                {item.values.map((item, index) => {
+                  return <Picker.Item label={item} value={item} key={index} />;
+                })}
+              </Picker>
+            </>
+          );
+        })}
+      </View>
+    );
+  };
 
   const qualityControlView = () => {
     return (
@@ -283,6 +418,10 @@ const DataCollection: React.FC<Props> = ({navigation}) => {
           {locationView()}
           <RSeperator title="Location Class" />
           {locationClassView()}
+          {selectedCategoriesList === 'Cropland' && (
+            <RSeperator title="Crop Information" />
+          )}
+          {selectedCategoriesList === 'Cropland' && cropInformationView()}
           <RSeperator title="Quality Control" />
           {qualityControlView()}
           <RSeperator title="Aadhaar number" />
