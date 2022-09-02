@@ -24,7 +24,6 @@ import {FloatingLabelInput} from 'react-native-floating-label-input';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {HomeStackParamList} from '@app/app/navigation/Navigator';
 import {RouteProp} from '@react-navigation/native';
-import RNFS from 'react-native-fs';
 
 interface NavigationProps {
   navigation: NativeStackNavigationProp<HomeStackParamList, 'DataCollection'>;
@@ -193,48 +192,42 @@ const DataCollection: React.FC<Props> = ({navigation}) => {
     );
   };
 
-  const selectImage = () => {
-    launchCamera(
-      {
+  const selectImage = async () => {
+    try {
+      const response = await launchCamera({
         mediaType: 'photo',
-        includeBase64: true,
+        includeBase64: false,
         quality: 0.1,
-        // saveToPhotos: true,
-      },
-      response => {
-        // Use launchImageLibrary to open image gallery
-        if (response.didCancel) {
-          console.log('User cancelled image picker');
-          return;
-        }
-        if (response.errorMessage) {
-          console.log('ImagePicker Error: ', response.errorMessage);
-          return;
-        }
-        if (!response.assets || response.assets.length === 0) {
-          return;
-        }
-        const source = {uri: response.assets[0].uri};
-
-        const destiny =
-          RNFS.DownloadDirectoryPath + `/${response.assets[0].fileName}`;
-
-        setImage(existingData =>
-          existingData !== []
-            ? [...existingData, {uri: source.uri!}]
-            : [{uri: source.uri!}],
-        );
-
-        RNFS.moveFile(source.uri!, destiny)
-          .then(() => {
-            console.log('file moved!');
-            setImageArray([...imageArray, destiny]);
-          })
-          .catch(err => {
-            Alert.alert('Error: ' + err.message);
-          });
-      },
-    );
+        saveToPhotos: true,
+      });
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+        return;
+      }
+      if (response.errorMessage) {
+        console.log('ImagePicker Error: ', response.errorMessage);
+        return;
+      }
+      if (
+        !response.assets ||
+        response.assets.length === 0 ||
+        !response.assets[0].uri
+      ) {
+        console.log('response assests issue');
+        return;
+      }
+      const uri = response.assets[0].uri;
+      const source = {uri: uri};
+      setImage(existingData =>
+        existingData !== []
+          ? [...existingData, {uri: source.uri!}]
+          : [{uri: source.uri!}],
+      );
+      setImageArray([...imageArray, uri]);
+    } catch (err) {
+      Alert.alert(err.message);
+      console.log(err);
+    }
   };
 
   const imageView = () => {
