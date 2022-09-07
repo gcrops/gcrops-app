@@ -95,6 +95,7 @@ const HomeScreen: React.FC<Props> = ({navigation}) => {
         latitude: String(session[1].content[0].coords.latitude),
         longitude: String(session[1].content[0].coords.longitude),
       },
+      crop: session.crop,
     });
   };
   const collectApiCall = async () => {

@@ -165,6 +165,17 @@ const DataCollection: React.FC<Props> = ({navigation}) => {
               },
             },
     },
+    {
+      type: 'crop',
+      value: 'crop data if landCoverType is crop',
+      content: {
+        waterSrouce: selectedWaterSource,
+        CropIntensity: selectedCropIntensity,
+        primaryCrop: selectedPrimaryCrop,
+        secondaryCrop: selectedSecondaryCrop,
+        liveStock: selectedLiveStock,
+      }
+    }
   ];
 
   const toggleSwitch = () => {
