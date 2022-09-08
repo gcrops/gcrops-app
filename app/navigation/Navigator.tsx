@@ -14,6 +14,7 @@ import {
   HomeScreen,
   MapPlottingScreen,
   ProfileScreen,
+  CollectLocationFromMapScreen,
 } from '../screens/PostAuthentication';
 import {Colors} from '../theme';
 import {LandingScreen} from '../screens/LandingScreen';
@@ -29,14 +30,17 @@ export type RootStackParamList = {
 export type HomeStackParamList = {
   HomeScreen: undefined;
   DataCollection: undefined;
+  DataCollectionNavigator: undefined;
   HelpScreen: undefined;
   MapPlottingScreen: undefined;
   ProfileScreen: undefined;
+  CollectLocationFromMapScreen: {latitude: number; longitude: number};
 };
 
 const Tab = createBottomTabNavigator();
 const AuthStack = createNativeStackNavigator();
 const HomeStack = createNativeStackNavigator();
+const DataCollectionStack = createNativeStackNavigator();
 
 const MyTheme = {
   ...DefaultTheme,
@@ -109,13 +113,36 @@ const TabNavigator = () => {
   );
 };
 
+const DataCollectionNavigator = () => {
+  return (
+    <DataCollectionStack.Navigator
+      initialRouteName="DataCollection"
+      screenOptions={{
+        animation: 'slide_from_right',
+        headerShown: false,
+      }}>
+      <DataCollectionStack.Screen
+        name="DataCollection"
+        component={DataCollection}
+      />
+      <DataCollectionStack.Screen
+        name="CollectLocationFromMapScreen"
+        component={CollectLocationFromMapScreen}
+      />
+    </DataCollectionStack.Navigator>
+  );
+};
+
 const HomeStackNavigator = () => {
   return (
     <HomeStack.Navigator
       initialRouteName="HomeScreen"
       screenOptions={{animation: 'slide_from_right'}}>
       <HomeStack.Screen name="ICRISAT - iCrops" component={HomeScreen} />
-      <HomeStack.Screen name="DataCollection" component={DataCollection} />
+      <HomeStack.Screen
+        name="DataCollectionNavigator"
+        component={DataCollectionNavigator}
+      />
     </HomeStack.Navigator>
   );
 };

@@ -181,6 +181,10 @@ const DataCollection: React.FC<Props> = ({navigation}) => {
     Geolocation.getCurrentPosition(
       position => {
         setLocationData([position]);
+        navigation.navigate('CollectLocationFromMapScreen', {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        });
       },
       error => {
         console.log('error:', error);

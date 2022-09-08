@@ -158,7 +158,7 @@ const HomeScreen: React.FC<Props> = ({navigation}) => {
           <RButton
             title="Collect Data"
             handleClick={() => {
-              navigation.navigate('DataCollection');
+              navigation.navigate('DataCollectionNavigator');
             }}
           />
           <RButton
