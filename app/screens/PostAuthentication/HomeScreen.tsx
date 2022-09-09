@@ -30,15 +30,19 @@ interface NavigationProps {
 interface Props extends NavigationProps {}
 
 const HomeScreen: React.FC<Props> = ({navigation}) => {
-  const {netConnection, showApiLoading, collectedData, allCollectedData} =
-    useUIElements();
+  const {
+    netConnection,
+    showApiLoading,
+    collectedData,
+    allCollectedData,
+    collectedLocationData,
+  } = useUIElements();
   const [showValidationAlert, setShowValidationAlert] = useState(false);
   const [showSyncAlert, setShowSyncAlert] = useState(false);
   const [showAllDataSynced, setShowAllDataSynced] = useState(false);
   const [showNoInternetAlert, setShowNoInternetAlert] = useState(false);
 
   const [metaObj, setMetaObj] = useState<Meta>();
-  const [base64Array, setBase64Array] = useState<string[]>([]);
 
   const handleAppStateChange = async (appState: AppStateStatus) => {
     switch (appState) {
@@ -92,8 +96,8 @@ const HomeScreen: React.FC<Props> = ({navigation}) => {
       images: images,
       landCoverType: String(session[2].content),
       location: {
-        latitude: String(session[1].content[0].coords.latitude),
-        longitude: String(session[1].content[0].coords.longitude),
+        latitude: String(session[1].content[0].latitude),
+        longitude: String(session[1].content[0].longitude),
       },
     });
   };
@@ -159,6 +163,7 @@ const HomeScreen: React.FC<Props> = ({navigation}) => {
             title="Collect Data"
             handleClick={() => {
               navigation.navigate('DataCollectionNavigator');
+              collectedLocationData([]);
             }}
           />
           <RButton

@@ -6,12 +6,17 @@ import {RPermissions} from '../components';
 import Geolocation from 'react-native-geolocation-service';
 import {LandingScreen} from '../screens/LandingScreen';
 import {getCollectedData} from '../networking/Client';
+import {LatLng} from 'react-native-maps';
 
 const UIContext = createContext({
   showApiLoading: (_value: boolean) => {
     return;
   },
   showLandingScreen: (_value: boolean) => {
+    return;
+  },
+  locationData: {} as LatLng[] | undefined,
+  collectedLocationData: (_value: any) => {
     return;
   },
   netConnection: false,
@@ -51,6 +56,9 @@ export const UIProvider = (props: UIProviderProps) => {
     useState<boolean>(true);
   const [isConnected, setIsConnected] = useState<boolean>(true);
   const [collectedDataObjs, setCollectedDataObjs] = useState([]);
+  const [collectedLocationObjs, setCollectedLocationObjs] = useState<LatLng[]>(
+    [],
+  );
 
   const getPastSyncData = async () => {
     try {
@@ -164,6 +172,8 @@ export const UIProvider = (props: UIProviderProps) => {
         authDispatch: authContext,
         allCollectedData: setCollectedDataObjs,
         collectedData: collectedDataObjs,
+        collectedLocationData: setCollectedLocationObjs,
+        locationData: collectedLocationObjs,
       }}>
       {apiLoading ? renderApiLoader() : null}
       {loadingLandingScreen ? renderLoader() : null}

@@ -16,7 +16,7 @@ import {
   RSeperator,
 } from '@app/app/components';
 import {useUIElements} from '@app/app/hooks/UIProvider';
-import Geolocation, {GeoPosition} from 'react-native-geolocation-service';
+import Geolocation from 'react-native-geolocation-service';
 import {Colors, Fonts} from '@app/app/theme';
 import {Picker} from '@react-native-picker/picker';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -33,7 +33,8 @@ interface NavigationProps {
 interface Props extends NavigationProps {}
 
 const DataCollection: React.FC<Props> = ({navigation}) => {
-  const {allCollectedData} = useUIElements();
+  const {allCollectedData, collectedLocationData, locationData} =
+    useUIElements();
   const [image, setImage] = useState<
     {
       uri: string;
@@ -41,7 +42,6 @@ const DataCollection: React.FC<Props> = ({navigation}) => {
   >([]);
   const [imageArray, setImageArray] = useState<string[]>([]);
   const [isEnabled, setIsEnabled] = useState(false);
-  const [locationData, setLocationData] = useState<GeoPosition[]>([]);
   const [showValidationAlert, setShowValidationAlert] = useState(false);
 
   const [selectedCategoriesList, setSelectedCategoriesList] = useState('');
@@ -170,7 +170,7 @@ const DataCollection: React.FC<Props> = ({navigation}) => {
   const toggleSwitch = () => {
     if (isEnabled) {
       setIsEnabled(prevState => !prevState);
-      setLocationData([]);
+      collectedLocationData([]);
     } else {
       location();
       setIsEnabled(prevState => !prevState);
@@ -180,7 +180,12 @@ const DataCollection: React.FC<Props> = ({navigation}) => {
   const location = async () => {
     Geolocation.getCurrentPosition(
       position => {
-        setLocationData([position]);
+        collectedLocationData([
+          {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          },
+        ]);
         navigation.navigate('CollectLocationFromMapScreen', {
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
@@ -275,8 +280,8 @@ const DataCollection: React.FC<Props> = ({navigation}) => {
         </View>
         <View>
           <Text style={{fontFamily: Fonts.RobotoBold}}>
-            Lat: {locationData?.[0]?.coords.latitude} Lon:{' '}
-            {locationData?.[0]?.coords.longitude}
+            Lat: {locationData?.[0]?.latitude} Lon:{' '}
+            {locationData?.[0]?.longitude}
           </Text>
         </View>
       </View>
@@ -305,11 +310,12 @@ const DataCollection: React.FC<Props> = ({navigation}) => {
   const cropInformationView = () => {
     return (
       <View>
-        {croplandTypes.map(item => {
+        {croplandTypes.map((item, index) => {
           return (
             <>
               <Text style={styles.textHeaderStyle}>{item.keyName}</Text>
               <Picker
+                key={index}
                 selectedValue={
                   item.keyName === 'Water Source'
                     ? selectedWaterSource
@@ -335,8 +341,10 @@ const DataCollection: React.FC<Props> = ({navigation}) => {
                     ? setSelectedSecondaryCrop(itemValue)
                     : setSelectedLiveStock(itemValue);
                 }}>
-                {item.values.map((item, index) => {
-                  return <Picker.Item label={item} value={item} key={index} />;
+                {item.values.map((value, valueindex) => {
+                  return (
+                    <Picker.Item label={value} value={value} key={valueindex} />
+                  );
                 })}
               </Picker>
             </>
