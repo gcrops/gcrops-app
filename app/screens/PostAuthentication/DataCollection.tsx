@@ -151,19 +151,7 @@ const DataCollection: React.FC<Props> = ({navigation}) => {
     {
       type: 'landClass',
       value: 'Set land cover class.',
-      content:
-        selectedCategoriesList !== 'Cropland'
-          ? selectedCategoriesList
-          : {
-              locationClass: 'Cropland',
-              cropInfo: {
-                'Water Source': selectedWaterSource,
-                'Crop Intensity': selectedCropIntensity,
-                'Primary Crop': selectedPrimaryCrop,
-                'Secondary Crop': selectedSecondaryCrop,
-                'Live Stock': selectedLiveStock,
-              },
-            },
+      content: selectedCategoriesList,
     },
     {
       type: 'crop',
@@ -174,8 +162,8 @@ const DataCollection: React.FC<Props> = ({navigation}) => {
         primaryCrop: selectedPrimaryCrop,
         secondaryCrop: selectedSecondaryCrop,
         liveStock: selectedLiveStock,
-      }
-    }
+      },
+    },
   ];
 
   const toggleSwitch = () => {
@@ -358,14 +346,22 @@ const DataCollection: React.FC<Props> = ({navigation}) => {
       <View>
         {qualityControlList.map((item, index) => {
           return (
-            <View key={index} style={styles.textContentStyle}>
-              <Text>{item.value}</Text>
-              {item.content.length === 0 ? (
-                <Icon name="square-o" size={20} color={Colors.secondary} />
-              ) : (
-                <Icon name="check-square-o" size={20} color={Colors.primary} />
+            <>
+              {item.type !== 'crop' && (
+                <View key={index} style={styles.textContentStyle}>
+                  <Text>{item.value}</Text>
+                  {item.content.length === 0 ? (
+                    <Icon name="square-o" size={20} color={Colors.secondary} />
+                  ) : (
+                    <Icon
+                      name="check-square-o"
+                      size={20}
+                      color={Colors.primary}
+                    />
+                  )}
+                </View>
               )}
-            </View>
+            </>
           );
         })}
       </View>
