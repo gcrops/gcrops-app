@@ -9,6 +9,7 @@
     "test": "jest",
     "lint:fix": "eslint . --fix",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "lint:fix": "eslint . --fix",
     "clean:android": "cd android && ./gradlew clean && cd ../",
     "clean:ios": "cd ios && xcodebuild clean && cd ../",
     "prettier": "prettier --write app && git add ."

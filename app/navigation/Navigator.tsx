@@ -125,10 +125,6 @@ const DataCollectionNavigator = () => {
         name="DataCollection"
         component={DataCollection}
       />
-      <DataCollectionStack.Screen
-        name="CollectLocationFromMapScreen"
-        component={CollectLocationFromMapScreen}
-      />
     </DataCollectionStack.Navigator>
   );
 };
@@ -142,6 +138,11 @@ const HomeStackNavigator = () => {
       <HomeStack.Screen
         name="DataCollectionNavigator"
         component={DataCollectionNavigator}
+      />
+      <DataCollectionStack.Screen
+        options={{headerShown: false}}
+        name="CollectLocationFromMapScreen"
+        component={CollectLocationFromMapScreen}
       />
     </HomeStack.Navigator>
   );

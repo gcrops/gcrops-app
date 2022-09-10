@@ -30,8 +30,13 @@ interface NavigationProps {
 interface Props extends NavigationProps {}
 
 const HomeScreen: React.FC<Props> = ({navigation}) => {
-  const {netConnection, showApiLoading, collectedData, allCollectedData} =
-    useUIElements();
+  const {
+    netConnection,
+    showApiLoading,
+    collectedData,
+    allCollectedData,
+    collectedLocationData,
+  } = useUIElements();
   const [showValidationAlert, setShowValidationAlert] = useState(false);
   const [showSyncAlert, setShowSyncAlert] = useState(false);
   const [showAllDataSynced, setShowAllDataSynced] = useState(false);
@@ -91,9 +96,10 @@ const HomeScreen: React.FC<Props> = ({navigation}) => {
       images: images,
       landCoverType: String(session[2].content),
       location: {
-        latitude: String(session[1].content[0].coords.latitude),
-        longitude: String(session[1].content[0].coords.longitude),
+        latitude: String(session[1].content[0].latitude),
+        longitude: String(session[1].content[0].longitude),
       },
+      crop: session[2].content === 'Cropland' ? session[3].content : undefined,
     });
   };
   const collectApiCall = async () => {
@@ -111,9 +117,10 @@ const HomeScreen: React.FC<Props> = ({navigation}) => {
         await uploadSession(session);
       }
       setShowSyncAlert(true);
+      metaApiCall();
       allCollectedData([]);
     } catch (error) {
-      console.log('error collect', error);
+      console.log('error collect', error.response.data);
     }
     showApiLoading(false);
   };
@@ -158,6 +165,7 @@ const HomeScreen: React.FC<Props> = ({navigation}) => {
             title="Collect Data"
             handleClick={() => {
               navigation.navigate('DataCollectionNavigator');
+              collectedLocationData([]);
             }}
           />
           <RButton
