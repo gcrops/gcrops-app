@@ -177,24 +177,30 @@ const HomeScreen: React.FC<Props> = ({navigation}) => {
 
         <View>
           <View style={{marginTop: 10}}>
-            <RAccordian
-              data={String(metaObj?.waterSource)}
-              title={'Water Source'}
-            />
-            <RAccordian data={String(metaObj?.cropType)} title={'Crop Type'} />
-            <RAccordian
-              data={String(metaObj?.landCover)}
-              title={'Land Cover'}
-            />
+            {metaObj?.waterSource && (
+              <RAccordian data={metaObj?.waterSource} title={'Water Source'} />
+            )}
+            {metaObj?.cropType && (
+              <RAccordian data={metaObj?.cropType} title={'Crop Type'} />
+            )}
+
+            {metaObj?.landCover && (
+              <RAccordian data={metaObj?.landCover} title={'Land Cover'} />
+            )}
           </View>
 
           <View style={{marginTop: 30}}>
+            {metaObj?.countSyncedData && (
+              <RAccordian
+                data={metaObj?.countSyncedData}
+                title={'Synced Status'}
+              />
+            )}
+
             <RAccordian
-              data={String(metaObj?.countSyncedData)}
-              title={'Synced Status'}
-            />
-            <RAccordian
-              data={String(collectedData.length)}
+              data={{
+                unSyncedData: collectedData.length,
+              }}
               title={'Not Synced Status'}
             />
           </View>
