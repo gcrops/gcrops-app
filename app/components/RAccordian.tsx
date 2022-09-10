@@ -14,11 +14,11 @@ import {Colors} from '../theme';
 const RAccordian = ({data, title}: {data: Object; title: String}) => {
   const [expanded, setExpanded] = useState(false);
   const rowValues = () => {
-    return Object.entries(data).map((key, value) => {
+    return Object.entries(data).map((key, _value) => {
       return (
         <View style={styles.child}>
-          <Text>{key}</Text>
-          <Text>{value}</Text>
+          <Text>{key[0]}</Text>
+          <Text>{key[1]}</Text>
         </View>
       );
     });
