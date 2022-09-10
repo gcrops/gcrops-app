@@ -15,6 +15,7 @@ const MapPlottingScreen = () => {
     try {
       const result = await mapData();
       setLocationArray(result.data.data);
+      console.log('result.data.data', result.data.data);
     } catch (error: any) {
       console.log({error});
     }
@@ -31,8 +32,8 @@ const MapPlottingScreen = () => {
           provider={PROVIDER_GOOGLE}
           style={styles.map}
           initialRegion={{
-            latitude: locationArray[1].latitude,
-            longitude: locationArray[1].longitude,
+            latitude: locationArray[0].latitude,
+            longitude: locationArray[0].longitude,
             latitudeDelta: 0.0922,
             longitudeDelta: 0.0421,
           }}>

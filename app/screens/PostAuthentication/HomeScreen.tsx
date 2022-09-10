@@ -99,7 +99,7 @@ const HomeScreen: React.FC<Props> = ({navigation}) => {
         latitude: String(session[1].content[0].latitude),
         longitude: String(session[1].content[0].longitude),
       },
-      crop: session.crop,
+      crop: session[2].content === 'Cropland' ? session[3].content : undefined,
     });
   };
   const collectApiCall = async () => {
@@ -117,9 +117,10 @@ const HomeScreen: React.FC<Props> = ({navigation}) => {
         await uploadSession(session);
       }
       setShowSyncAlert(true);
+      metaApiCall();
       allCollectedData([]);
     } catch (error) {
-      console.log('error collect', error);
+      console.log('error collect', error.response.data);
     }
     showApiLoading(false);
   };
