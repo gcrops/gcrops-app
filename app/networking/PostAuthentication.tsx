@@ -38,14 +38,22 @@ export const collect = ({
   images,
   landCoverType,
   location,
+  crop,
 }: {
   images: string[];
   landCoverType: string;
   location: {latitude: string; longitude: string};
+  crop: {
+    waterSource: string;
+    cropIntensity: string;
+    primaryCrop: string;
+    secondaryCrop: string;
+    liveStock: string;
+  };
 }): AxiosPromise<Collect> => {
   return client({
     method: 'post',
     url: '/collect',
-    data: {images, landCoverType, location},
+    data: {images, landCoverType, location, crop},
   });
 };
