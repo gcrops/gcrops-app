@@ -33,8 +33,12 @@ interface NavigationProps {
 interface Props extends NavigationProps {}
 
 const DataCollection: React.FC<Props> = ({navigation}) => {
-  const {allCollectedData, collectedLocationData, locationData} =
-    useUIElements();
+  const {
+    allCollectedData,
+    collectedLocationData,
+    locationData,
+    showApiLoading,
+  } = useUIElements();
   const [image, setImage] = useState<
     {
       uri: string;
@@ -46,11 +50,11 @@ const DataCollection: React.FC<Props> = ({navigation}) => {
 
   const [selectedCategoriesList, setSelectedCategoriesList] = useState('');
 
-  const [selectedWaterSource, setSelectedWaterSource] = useState('');
-  const [selectedCropIntensity, setSelectedCropIntensity] = useState('');
-  const [selectedPrimaryCrop, setSelectedPrimaryCrop] = useState('');
-  const [selectedSecondaryCrop, setSelectedSecondaryCrop] = useState('');
-  const [selectedLiveStock, setSelectedLiveStock] = useState('');
+  const [selectedWaterSource, setSelectedWaterSource] = useState('Unknown');
+  const [selectedCropIntensity, setSelectedCropIntensity] = useState('Unknown');
+  const [selectedPrimaryCrop, setSelectedPrimaryCrop] = useState('Unknown');
+  const [selectedSecondaryCrop, setSelectedSecondaryCrop] = useState('Unknown');
+  const [selectedLiveStock, setSelectedLiveStock] = useState('Unknown');
 
   const categoriesList = [
     'Select Land Type',
@@ -173,11 +177,11 @@ const DataCollection: React.FC<Props> = ({navigation}) => {
       collectedLocationData([]);
     } else {
       location();
-      setIsEnabled(prevState => !prevState);
     }
   };
 
   const location = async () => {
+    showApiLoading(true);
     Geolocation.getCurrentPosition(
       position => {
         collectedLocationData([
@@ -190,9 +194,12 @@ const DataCollection: React.FC<Props> = ({navigation}) => {
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
         });
+        showApiLoading(false);
+        setIsEnabled(prevState => !prevState);
       },
       error => {
         console.log('error:', error);
+        showApiLoading(false);
       },
       {
         enableHighAccuracy: true,
