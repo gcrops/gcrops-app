@@ -1,6 +1,6 @@
 export interface RootObject {
-  waterSource: number;
-  cropType: number;
-  landCover: number;
-  countSyncedData: number;
+  waterSource: Object;
+  cropType: Object;
+  landCover: Object;
+  countSyncedData: Object;
 }
