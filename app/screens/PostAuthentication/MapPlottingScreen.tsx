@@ -15,7 +15,6 @@ const MapPlottingScreen = () => {
     try {
       const result = await mapData();
       setLocationArray(result.data.data);
-      console.log('result.data.data', result.data.data);
     } catch (error: any) {
       console.log({error});
     }
