@@ -51,9 +51,6 @@ const CollectLocationFromMapScreen: FC<Props> = ({route, navigation}) => {
             longitude: region.longitude,
           });
         }}
-        onRegionChangeComplete={() => {
-          setConfirm(true);
-        }}
         initialRegion={{
           latitude: locationArray.latitude,
           longitude: locationArray.longitude,
@@ -67,18 +64,15 @@ const CollectLocationFromMapScreen: FC<Props> = ({route, navigation}) => {
           }}
         />
       </MapView>
-      {confirm && (
-        <TouchableOpacity
-          style={styles.confirmButtonStyle}
-          onPress={() => {
-            collectedLocationData([locationArray]);
-            navigation.pop();
-          }}>
-          <Text style={styles.confirmButtonTitleStyle}>
-            {'Confirm Location'}
-          </Text>
-        </TouchableOpacity>
-      )}
+
+      <TouchableOpacity
+        style={styles.confirmButtonStyle}
+        onPress={() => {
+          collectedLocationData([locationArray]);
+          navigation.pop();
+        }}>
+        <Text style={styles.confirmButtonTitleStyle}>{'Confirm Location'}</Text>
+      </TouchableOpacity>
     </View>
   );
 };
