@@ -11,9 +11,18 @@ import React, {useEffect, useState} from 'react';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {Colors} from '../theme';
 
-const RAccordian = ({data, title}: {data: String; title: String}) => {
+const RAccordian = ({data, title}: {data: Object; title: String}) => {
   const [expanded, setExpanded] = useState(false);
-
+  const rowValues = () => {
+    return Object.entries(data).map((key, value) => {
+      return (
+        <View style={styles.child}>
+          <Text>{key}</Text>
+          <Text>{value}</Text>
+        </View>
+      );
+    });
+  };
   const toggleExpand = () => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     setExpanded(prevState => !prevState);
@@ -39,12 +48,7 @@ const RAccordian = ({data, title}: {data: String; title: String}) => {
         />
       </TouchableOpacity>
       <View style={styles.parentHr} />
-      {expanded && (
-        <View style={styles.child}>
-          <Text>{title}</Text>
-          <Text>{data}</Text>
-        </View>
-      )}
+      {expanded && rowValues()}
     </View>
   );
 };
