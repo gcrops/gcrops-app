@@ -6,6 +6,7 @@ import {
   Text,
   Switch,
   Alert,
+  TextInput,
 } from 'react-native';
 import React, {useState} from 'react';
 import {launchCamera} from 'react-native-image-picker';
@@ -24,6 +25,7 @@ import {FloatingLabelInput} from 'react-native-floating-label-input';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {HomeStackParamList} from '@app/app/navigation/Navigator';
 import {RouteProp} from '@react-navigation/native';
+import Slider from '@react-native-community/slider';
 
 interface NavigationProps {
   navigation: NativeStackNavigationProp<HomeStackParamList, 'DataCollection'>;
@@ -47,6 +49,7 @@ const DataCollection: React.FC<Props> = ({navigation}) => {
   const [imageArray, setImageArray] = useState<string[]>([]);
   const [isEnabled, setIsEnabled] = useState(false);
   const [showValidationAlert, setShowValidationAlert] = useState(false);
+  const [locationOffsetValue, setLocationOffsetValue] = useState(0);
 
   const [selectedCategoriesList, setSelectedCategoriesList] = useState('');
 
@@ -55,6 +58,14 @@ const DataCollection: React.FC<Props> = ({navigation}) => {
   const [selectedPrimaryCrop, setSelectedPrimaryCrop] = useState('Unknown');
   const [selectedSecondaryCrop, setSelectedSecondaryCrop] = useState('Unknown');
   const [selectedLiveStock, setSelectedLiveStock] = useState('Unknown');
+
+  const [sampleSize, setSampleSize] = useState('');
+  const [grainweight, setGrainweight] = useState('');
+  const [bioMassweight, setBioMassweight] = useState('');
+  const [cultivar, setCultivar] = useState('');
+  const [sowingDate, setSowingDate] = useState('');
+  const [harvestDate, setHarvestDate] = useState('');
+  const [descriptionValue, setDescriptionValue] = useState('');
 
   const categoriesList = [
     'Select Land Type',
@@ -168,6 +179,25 @@ const DataCollection: React.FC<Props> = ({navigation}) => {
         liveStock: selectedLiveStock,
       },
     },
+    {
+      type: 'cropcutting',
+      value: 'crop cutting data if landCoverType is crop',
+      content: {
+        samplesize: sampleSize,
+        grainweight: grainweight,
+        biomassweight: bioMassweight,
+        cultivar,
+        sowingdate: sowingDate,
+        harvestdate: harvestDate,
+      },
+    },
+    {type: 'description', value: 'description', content: descriptionValue},
+    {
+      type: 'locationOffset',
+      value: 'Capture bearing to center of area',
+      content: locationOffsetValue,
+    },
+    // {type: 'aadharNumber', value: 'aadharNumber', content: aadhaar},
   ];
 
   const toggleSwitch = () => {
@@ -204,6 +234,24 @@ const DataCollection: React.FC<Props> = ({navigation}) => {
         enableHighAccuracy: true,
         timeout: 15000,
       },
+    );
+  };
+
+  const locationOffset = () => {
+    return (
+      <View>
+        <Text style={styles.textHeaderStyle}>
+          Bearing to Center: {locationOffsetValue} Meters
+        </Text>
+        <Slider
+          style={styles.sliderStyle}
+          minimumValue={0}
+          maximumValue={150}
+          onValueChange={value => setLocationOffsetValue(Math.round(value))}
+          minimumTrackTintColor={Colors.secondary}
+          maximumTrackTintColor={Colors.primary}
+        />
+      </View>
     );
   };
 
@@ -360,29 +408,82 @@ const DataCollection: React.FC<Props> = ({navigation}) => {
     );
   };
 
+  const cropCuttingEstimates = () => {
+    return (
+      <View>
+        <Text style={styles.textHeaderStyle}>Sample Size</Text>
+        <TextInput
+          underlineColorAndroid={Colors.secondary}
+          onChangeText={value => setSampleSize(value)}
+          keyboardType={'numeric'}
+        />
+        <Text style={styles.textHeaderStyle}>Grain weight</Text>
+        <TextInput
+          underlineColorAndroid={Colors.secondary}
+          onChangeText={value => setGrainweight(value)}
+          keyboardType={'numeric'}
+        />
+        <Text style={styles.textHeaderStyle}>Bio-Mass weight</Text>
+        <TextInput
+          underlineColorAndroid={Colors.secondary}
+          onChangeText={value => setBioMassweight(value)}
+          keyboardType={'numeric'}
+        />
+        <Text style={styles.textHeaderStyle}>Cultivar</Text>
+        <TextInput
+          underlineColorAndroid={Colors.secondary}
+          onChangeText={value => setCultivar(value)}
+        />
+        <Text style={styles.textHeaderStyle}>Sowing date</Text>
+        <TextInput
+          underlineColorAndroid={Colors.secondary}
+          onChangeText={value => setSowingDate(value)}
+        />
+        <Text style={styles.textHeaderStyle}>Harvest date</Text>
+        <TextInput
+          underlineColorAndroid={Colors.secondary}
+          onChangeText={value => setHarvestDate(value)}
+        />
+      </View>
+    );
+  };
+
   const qualityControlView = () => {
     return (
       <View>
         {qualityControlList.map((item, index) => {
           return (
             <>
-              {item.type !== 'crop' && (
-                <View key={index} style={styles.textContentStyle}>
-                  <Text>{item.value}</Text>
-                  {item.content.length === 0 ? (
-                    <Icon name="square-o" size={20} color={Colors.secondary} />
-                  ) : (
-                    <Icon
-                      name="check-square-o"
-                      size={20}
-                      color={Colors.primary}
-                    />
-                  )}
-                </View>
-              )}
+              {item.type !== 'crop' &&
+                item.type !== 'cropcutting' &&
+                item.type !== 'locationOffset' &&
+                item.type !== 'description' && (
+                  <View key={index} style={styles.textContentStyle}>
+                    <Text>{item.value}</Text>
+                    {item.content.length === 0 ? (
+                      <Icon
+                        name="square-o"
+                        size={20}
+                        color={Colors.secondary}
+                      />
+                    ) : (
+                      <Icon
+                        name="check-square-o"
+                        size={20}
+                        color={Colors.primary}
+                      />
+                    )}
+                  </View>
+                )}
             </>
           );
         })}
+        <TextInput
+          style={styles.descriptionStyle}
+          multiline={true}
+          numberOfLines={5}
+          onChangeText={value => setDescriptionValue(value)}
+        />
       </View>
     );
   };
@@ -435,12 +536,18 @@ const DataCollection: React.FC<Props> = ({navigation}) => {
         <View>
           <RSeperator title="Location" />
           {locationView()}
+          <RSeperator title="Location Offset" />
+          {locationOffset()}
           <RSeperator title="Location Class" />
           {locationClassView()}
           {selectedCategoriesList === 'Cropland' && (
             <RSeperator title="Crop Information" />
           )}
           {selectedCategoriesList === 'Cropland' && cropInformationView()}
+          {selectedCategoriesList === 'Cropland' && (
+            <RSeperator title="Crop Cutting Estimates" />
+          )}
+          {selectedCategoriesList === 'Cropland' && cropCuttingEstimates()}
           <RSeperator title="Quality Control" />
           {qualityControlView()}
           <RSeperator title="Aadhaar number" />
@@ -474,6 +581,7 @@ const styles = StyleSheet.create({
     height: 150,
   },
   textHeaderStyle: {fontFamily: Fonts.RobotoBold, fontSize: 18},
+  sliderStyle: {width: '100%', height: 40},
   textContentStyle: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -490,5 +598,11 @@ const styles = StyleSheet.create({
     height: 40,
     borderBottomWidth: 1,
     marginBottom: 10,
+  },
+  descriptionStyle: {
+    borderWidth: 0.5,
+    borderColor: Colors.secondary,
+    borderRadius: 12,
+    textAlignVertical: 'top',
   },
 });

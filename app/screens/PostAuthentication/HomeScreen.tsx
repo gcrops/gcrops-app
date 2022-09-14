@@ -98,8 +98,12 @@ const HomeScreen: React.FC<Props> = ({navigation}) => {
       location: {
         latitude: String(session[1].content[0].latitude),
         longitude: String(session[1].content[0].longitude),
+        offset: String(session[6].content),
       },
       crop: session[2].content === 'Cropland' ? session[3].content : undefined,
+      cropcutting:
+        session[2].content === 'Cropland' ? session[4].content : undefined,
+      description: session[5].content,
     });
   };
   const collectApiCall = async () => {

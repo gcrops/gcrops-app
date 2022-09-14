@@ -39,10 +39,12 @@ export const collect = ({
   landCoverType,
   location,
   crop,
+  cropcutting,
+  description,
 }: {
   images: string[];
   landCoverType: string;
-  location: {latitude: string; longitude: string};
+  location: {latitude: string; longitude: string; offset: string};
   crop: {
     waterSource: string;
     cropIntensity: string;
@@ -50,10 +52,19 @@ export const collect = ({
     secondaryCrop: string;
     liveStock: string;
   };
+  cropcutting: {
+    samplesize: string;
+    grainweight: string;
+    biomassweight: string;
+    cultivar: string;
+    sowingdate: string;
+    harvestdate: string;
+  };
+  description: string;
 }): AxiosPromise<Collect> => {
   return client({
     method: 'post',
     url: '/collect',
-    data: {images, landCoverType, location, crop},
+    data: {images, landCoverType, location, crop, cropcutting, description},
   });
 };
