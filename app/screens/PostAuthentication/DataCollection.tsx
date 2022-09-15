@@ -260,7 +260,6 @@ const DataCollection: React.FC<Props> = ({navigation}) => {
       const response = await launchCamera({
         mediaType: 'photo',
         includeBase64: false,
-        quality: 1.0,
         saveToPhotos: true,
       });
       if (response.didCancel) {
