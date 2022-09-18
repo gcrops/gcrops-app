@@ -17,7 +17,7 @@ import {
   RSeperator,
 } from '@app/app/components';
 import {useUIElements} from '@app/app/hooks/UIProvider';
-import Geolocation from 'react-native-geolocation-service';
+// import Geolocation from 'react-native-geolocation-service';
 import {Colors, Fonts} from '@app/app/theme';
 import {Picker} from '@react-native-picker/picker';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -26,6 +26,7 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {HomeStackParamList} from '@app/app/navigation/Navigator';
 import {RouteProp} from '@react-navigation/native';
 import Slider from '@react-native-community/slider';
+import Geolocation from '@react-native-community/geolocation';
 
 interface NavigationProps {
   navigation: NativeStackNavigationProp<HomeStackParamList, 'DataCollection'>;
@@ -213,6 +214,7 @@ const DataCollection: React.FC<Props> = ({navigation}) => {
     showApiLoading(true);
     Geolocation.getCurrentPosition(
       position => {
+        console.log('positions', position);
         collectedLocationData([
           {
             latitude: position.coords.latitude,
@@ -231,11 +233,55 @@ const DataCollection: React.FC<Props> = ({navigation}) => {
         showApiLoading(false);
       },
       {
-        enableHighAccuracy: true,
-        maximumAge: 10000,
+        interval: 0,
+        enableHighAccuracy: false,
+        // maximumAge: 10000,
         timeout: 15000,
+        distanceFilter: 0,
       },
     );
+    // Geolocation.getCurrentPosition(
+    //   position => {
+    //     console.log('positions', position);
+    //     collectedLocationData([
+    //       {
+    //         latitude: position.coords.latitude,
+    //         longitude: position.coords.longitude,
+    //       },
+    //     ]);
+    //     navigation.navigate('CollectLocationFromMapScreen', {
+    //       latitude: position.coords.latitude,
+    //       longitude: position.coords.longitude,
+    //     });
+    //     showApiLoading(false);
+    //     setIsEnabled(prevState => !prevState);
+    //   },
+    //   error => {
+    //     console.log('error:', error);
+    //     showApiLoading(false);
+    //   },
+    //   // {
+    //   //   enableHighAccuracy: true,
+    //   //   // timeout: 20000,
+    //   //   // maximumAge: 10000,
+    //   //   distanceFilter: 0,
+    //   //   forceRequestLocation: true,
+    //   //   accuracy: {
+    //   //     android: 'high',
+    //   //     ios: 'bestForNavigation',
+    //   //   },
+    //   // },
+    //   // {
+    //   //   enableHighAccuracy: true,
+    //   //   timeout: 15000,
+    //   //   // maximumAge: 10000,
+    //   //   distanceFilter: 0,
+    //   //   // forceRequestLocation: true,
+    //   //   accuracy: {
+    //   //     android: 'high',
+    //   //   },
+    //   // },
+    // );
   };
 
   const locationOffset = () => {
