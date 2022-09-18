@@ -232,10 +232,10 @@ const DataCollection: React.FC<Props> = ({navigation}) => {
       },
       {
         enableHighAccuracy: true,
-        maximumAge:1000,
-        accuracy:{
-          android:'high',
-          ios:'best'
+        maximumAge: 10000,
+        accuracy: {
+          android: 'balanced',
+          ios: 'best',
         },
         timeout: 15000,
       },
