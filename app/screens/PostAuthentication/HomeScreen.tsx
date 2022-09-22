@@ -19,7 +19,11 @@ import {collect, metaData} from '@app/app/networking';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {HomeStackParamList} from '@app/app/navigation/Navigator';
 import {RouteProp} from '@react-navigation/native';
-import {saveCollectedData} from '@app/app/networking/Client';
+import {
+  getMetaData,
+  saveCollectedData,
+  setMetaData,
+} from '@app/app/networking/Client';
 import RNFS from 'react-native-fs';
 
 interface NavigationProps {
@@ -72,6 +76,7 @@ const HomeScreen: React.FC<Props> = ({navigation}) => {
     try {
       let response = await metaData();
       setMetaObj(response.data);
+      setMetaData(response.data);
     } catch (error) {
       console.log('error', error);
     }
@@ -101,8 +106,7 @@ const HomeScreen: React.FC<Props> = ({navigation}) => {
         offset: String(session[6].content),
       },
       crop: session[2].content === 'Cropland' ? session[3].content : undefined,
-      cropcutting:
-        session[2].content === 'Cropland' ? session[4].content : undefined,
+      cropcutting: session[4].content,
       description: session[5].content,
     });
   };
@@ -129,10 +133,13 @@ const HomeScreen: React.FC<Props> = ({navigation}) => {
     showApiLoading(false);
   };
 
+  const metaDataFromAsync = async () => {
+    const response = await getMetaData();
+    setMetaObj(response.data);
+  };
   useEffect(() => {
-    metaApiCall();
+    metaDataFromAsync();
   }, []);
-
   return (
     <RKeyboardAvoidingView>
       <View style={styles.cardOverlay}>
@@ -183,25 +190,21 @@ const HomeScreen: React.FC<Props> = ({navigation}) => {
 
         <View>
           <View style={{marginTop: 10}}>
-            {metaObj?.waterSource && (
-              <RAccordian data={metaObj?.waterSource} title={'Water Source'} />
-            )}
-            {metaObj?.cropType && (
-              <RAccordian data={metaObj?.cropType} title={'Crop Type'} />
-            )}
+            <RAccordian
+              data={metaObj?.waterSource || {}}
+              title={'Water Source'}
+            />
 
-            {metaObj?.landCover && (
-              <RAccordian data={metaObj?.landCover} title={'Land Cover'} />
-            )}
+            <RAccordian data={metaObj?.cropType || {}} title={'Crop Type'} />
+
+            <RAccordian data={metaObj?.landCover || {}} title={'Land Cover'} />
           </View>
 
           <View style={{marginTop: 30}}>
-            {metaObj?.countSyncedData && (
-              <RAccordian
-                data={metaObj?.countSyncedData}
-                title={'Synced Status'}
-              />
-            )}
+            <RAccordian
+              data={metaObj?.countSyncedData || {}}
+              title={'Synced Status'}
+            />
 
             <RAccordian
               data={{
