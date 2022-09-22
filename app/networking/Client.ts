@@ -1,6 +1,7 @@
 import {AppConfig} from '../helpers';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Geolocation from 'react-native-geolocation-service';
+import {RootObject as Meta} from '@app/app/networking/types/Meta';
 
 import axios from 'axios';
 
@@ -64,8 +65,22 @@ export const getCollectedData = async (): Promise<
         }
     )[]
 > => {
-  const authorization = await AsyncStorage.getItem('CollectedData');
-  return authorization ? JSON.parse(authorization) : null;
+  const collectedData = await AsyncStorage.getItem('CollectedData');
+  return collectedData ? JSON.parse(collectedData) : null;
+};
+
+export const setMetaData = async (data: Meta) => {
+  await AsyncStorage.setItem(
+    'MetaData',
+    JSON.stringify({
+      data,
+    }),
+  );
+};
+
+export const getMetaData = async (): Promise<{data: Meta}> => {
+  const metaData = await AsyncStorage.getItem('MetaData');
+  return metaData ? JSON.parse(metaData) : null;
 };
 
 export const getAuthorization = async (): Promise<{

@@ -49,6 +49,8 @@ const DataCollection: React.FC<Props> = ({navigation}) => {
   >([]);
   const [imageArray, setImageArray] = useState<string[]>([]);
   const [isEnabled, setIsEnabled] = useState(false);
+  const [isMapEnabled, setIsMapEnabled] = useState(false);
+  const [isCropCuttingEnabled, setIsCropCuttingEnabled] = useState(false);
   const [showValidationAlert, setShowValidationAlert] = useState(false);
   const [locationOffsetValue, setLocationOffsetValue] = useState(0);
 
@@ -210,6 +212,42 @@ const DataCollection: React.FC<Props> = ({navigation}) => {
     }
   };
 
+  const toggleMapSwitch = () => {
+    if (isMapEnabled) {
+      setIsMapEnabled(prevState => !prevState);
+    } else {
+      mapLocation();
+    }
+  };
+
+  const toggleCropCuttingEnabledSwitch = () => {
+    setIsCropCuttingEnabled(prevState => !prevState);
+  };
+
+  const mapLocation = () => {
+    showApiLoading(true);
+    Geolocation.getCurrentPosition(
+      position => {
+        navigation.navigate('CollectLocationFromMapScreen', {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        });
+        showApiLoading(false);
+      },
+      error => {
+        console.log('error:', error);
+        showApiLoading(false);
+      },
+      {
+        interval: 0,
+        enableHighAccuracy: false,
+        // maximumAge: 10000,
+        timeout: 15000,
+        distanceFilter: 0,
+      },
+    );
+  };
+
   const location = async () => {
     showApiLoading(true);
     Geolocation.getCurrentPosition(
@@ -221,10 +259,6 @@ const DataCollection: React.FC<Props> = ({navigation}) => {
             longitude: position.coords.longitude,
           },
         ]);
-        navigation.navigate('CollectLocationFromMapScreen', {
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-        });
         showApiLoading(false);
         setIsEnabled(prevState => !prevState);
       },
@@ -378,6 +412,18 @@ const DataCollection: React.FC<Props> = ({navigation}) => {
             onChange={toggleSwitch}
           />
         </View>
+        <View style={styles.textContentStyle}>
+          <Text style={styles.textHeaderStyle}>
+            Pic Location from Satilite map
+          </Text>
+          <Switch
+            trackColor={{false: '#767577', true: Colors.secondary}}
+            thumbColor={isMapEnabled ? '#f5dd4b' : '#f4f3f4'}
+            ios_backgroundColor="#3e3e3e"
+            value={isMapEnabled}
+            onChange={toggleMapSwitch}
+          />
+        </View>
         <View>
           <Text style={{fontFamily: Fonts.RobotoBold}}>
             Lat: {locationData?.[0]?.latitude} Lon:{' '}
@@ -457,39 +503,55 @@ const DataCollection: React.FC<Props> = ({navigation}) => {
   const cropCuttingEstimates = () => {
     return (
       <View>
-        <Text style={styles.textHeaderStyle}>Sample Size</Text>
-        <TextInput
-          underlineColorAndroid={Colors.secondary}
-          onChangeText={value => setSampleSize(value)}
-          keyboardType={'numeric'}
-        />
-        <Text style={styles.textHeaderStyle}>Grain weight</Text>
-        <TextInput
-          underlineColorAndroid={Colors.secondary}
-          onChangeText={value => setGrainweight(value)}
-          keyboardType={'numeric'}
-        />
-        <Text style={styles.textHeaderStyle}>Bio-Mass weight</Text>
-        <TextInput
-          underlineColorAndroid={Colors.secondary}
-          onChangeText={value => setBioMassweight(value)}
-          keyboardType={'numeric'}
-        />
-        <Text style={styles.textHeaderStyle}>Cultivar</Text>
-        <TextInput
-          underlineColorAndroid={Colors.secondary}
-          onChangeText={value => setCultivar(value)}
-        />
-        <Text style={styles.textHeaderStyle}>Sowing date</Text>
-        <TextInput
-          underlineColorAndroid={Colors.secondary}
-          onChangeText={value => setSowingDate(value)}
-        />
-        <Text style={styles.textHeaderStyle}>Harvest date</Text>
-        <TextInput
-          underlineColorAndroid={Colors.secondary}
-          onChangeText={value => setHarvestDate(value)}
-        />
+        <View style={styles.textContentStyle}>
+          <Text style={styles.textHeaderStyle}>
+            Collect Crop Cutting Estimates
+          </Text>
+          <Switch
+            trackColor={{false: '#767577', true: Colors.secondary}}
+            thumbColor={isMapEnabled ? '#f5dd4b' : '#f4f3f4'}
+            ios_backgroundColor="#3e3e3e"
+            value={isCropCuttingEnabled}
+            onChange={toggleCropCuttingEnabledSwitch}
+          />
+        </View>
+        {isCropCuttingEnabled ? (
+          <View>
+            <Text style={styles.textHeaderStyle}>Sample Size</Text>
+            <TextInput
+              underlineColorAndroid={Colors.secondary}
+              onChangeText={value => setSampleSize(value)}
+              keyboardType={'numeric'}
+            />
+            <Text style={styles.textHeaderStyle}>Grain weight</Text>
+            <TextInput
+              underlineColorAndroid={Colors.secondary}
+              onChangeText={value => setGrainweight(value)}
+              keyboardType={'numeric'}
+            />
+            <Text style={styles.textHeaderStyle}>Bio-Mass weight</Text>
+            <TextInput
+              underlineColorAndroid={Colors.secondary}
+              onChangeText={value => setBioMassweight(value)}
+              keyboardType={'numeric'}
+            />
+            <Text style={styles.textHeaderStyle}>Cultivar</Text>
+            <TextInput
+              underlineColorAndroid={Colors.secondary}
+              onChangeText={value => setCultivar(value)}
+            />
+            <Text style={styles.textHeaderStyle}>Sowing date</Text>
+            <TextInput
+              underlineColorAndroid={Colors.secondary}
+              onChangeText={value => setSowingDate(value)}
+            />
+            <Text style={styles.textHeaderStyle}>Harvest date</Text>
+            <TextInput
+              underlineColorAndroid={Colors.secondary}
+              onChangeText={value => setHarvestDate(value)}
+            />
+          </View>
+        ) : null}
       </View>
     );
   };
@@ -590,10 +652,8 @@ const DataCollection: React.FC<Props> = ({navigation}) => {
             <RSeperator title="Crop Information" />
           )}
           {selectedCategoriesList === 'Cropland' && cropInformationView()}
-          {selectedCategoriesList === 'Cropland' && (
-            <RSeperator title="Crop Cutting Estimates" />
-          )}
-          {selectedCategoriesList === 'Cropland' && cropCuttingEstimates()}
+          {<RSeperator title="Crop Cutting Estimates" />}
+          {cropCuttingEstimates()}
           <RSeperator title="Quality Control" />
           {qualityControlView()}
           <RSeperator title="Aadhaar number" />
