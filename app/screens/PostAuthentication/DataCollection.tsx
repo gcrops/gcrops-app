@@ -233,7 +233,7 @@ const DataCollection: React.FC<Props> = ({navigation}) => {
     return new Promise((resolve, reject) => {
       const geolocation = Geolocation;
       geolocation.setRNConfiguration({
-        skipPermissionRequests: false,
+        skipPermissionRequests: true,
         authorizationLevel: 'always',
         locationProvider: 'android',
       });
@@ -250,7 +250,7 @@ const DataCollection: React.FC<Props> = ({navigation}) => {
         },
         {
           interval: 0,
-          enableHighAccuracy: false,
+          enableHighAccuracy: true,
           timeout: 15000,
           distanceFilter: 0,
         },
