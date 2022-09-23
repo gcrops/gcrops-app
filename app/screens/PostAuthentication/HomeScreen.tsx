@@ -93,39 +93,42 @@ const HomeScreen: React.FC<Props> = ({navigation}) => {
     return returnValue;
   };
   const uploadSession = async (session: any) => {
-    //RoadMap
-    //1. First collect the images in the disk and convert them into js array objects
-    //2. Second upload the images with other meta objects
-    const images = await stringToBase64(session);
-    await collect({
-      images: images,
-      landCoverType: String(session[2].content),
-      location: {
-        latitude: String(session[1].content[0].latitude),
-        longitude: String(session[1].content[0].longitude),
-        offset: String(session[6].content),
-      },
-      crop: session[2].content === 'Cropland' ? session[3].content : undefined,
-      cropcutting: session[4].content,
-      description: session[5].content,
-    });
+    try {
+      //RoadMap
+      //1. First collect the images in the disk and convert them into js array objects
+      //2. Second upload the images with other meta objects
+      const images = await stringToBase64(session);
+      await collect({
+        images: images,
+        landCoverType: String(session[2].content),
+        location: {
+          latitude: String(session[1].content[0].latitude),
+          longitude: String(session[1].content[0].longitude),
+          offset: String(session[6].content),
+        },
+        crop:
+          session[2].content === 'Cropland' ? session[3].content : undefined,
+        cropcutting: session[4].content,
+        description: session[5].content,
+      });
+    } catch (error) {
+      console.log('error in uploading session', error);
+    }
   };
   const collectApiCall = async () => {
     if (!netConnection) {
       setShowNoInternetAlert(true);
       return;
     }
+    await metaApiCall();
     if (collectedData.length === 0) {
       setShowAllDataSynced(true);
       return;
     }
     showApiLoading(true);
     try {
-      for (const session of collectedData) {
-        await uploadSession(session);
-      }
+      await Promise.all(collectedData.map(session => uploadSession(session)));
       setShowSyncAlert(true);
-      metaApiCall();
       allCollectedData([]);
     } catch (error) {
       console.log('error collect', error.response.data);
