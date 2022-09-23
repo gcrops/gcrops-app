@@ -250,7 +250,7 @@ const DataCollection: React.FC<Props> = ({navigation}) => {
         },
         {
           interval: 0,
-          enableHighAccuracy: false,
+          enableHighAccuracy: true,
           timeout: 15000,
           distanceFilter: 0,
         },
