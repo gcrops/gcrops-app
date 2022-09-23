@@ -224,98 +224,61 @@ const DataCollection: React.FC<Props> = ({navigation}) => {
     setIsCropCuttingEnabled(prevState => !prevState);
   };
 
-  const mapLocation = () => {
+  interface LocationInterface {
+    latitude: number;
+    longitude: number;
+  }
+
+  const locationCoordinates = (): Promise<LocationInterface> => {
+    return new Promise((resolve, reject) => {
+      const geolocation = Geolocation;
+      geolocation.setRNConfiguration({
+        skipPermissionRequests: false,
+        authorizationLevel: 'always',
+        locationProvider: 'android',
+      });
+      geolocation.getCurrentPosition(
+        position => {
+          resolve({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          });
+        },
+        error => {
+          Alert.alert('error:', `${error}`);
+          reject(error);
+        },
+        {
+          interval: 0,
+          enableHighAccuracy: false,
+          timeout: 15000,
+          distanceFilter: 0,
+        },
+      );
+    });
+  };
+
+  const mapLocation = async () => {
     showApiLoading(true);
-    Geolocation.getCurrentPosition(
-      position => {
-        navigation.navigate('CollectLocationFromMapScreen', {
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-        });
-        showApiLoading(false);
-      },
-      error => {
-        console.log('error:', error);
-        showApiLoading(false);
-      },
-      {
-        interval: 0,
-        enableHighAccuracy: false,
-        // maximumAge: 10000,
-        timeout: 15000,
-        distanceFilter: 0,
-      },
-    );
+    const locationCor = await locationCoordinates();
+    navigation.navigate('CollectLocationFromMapScreen', {
+      latitude: locationCor.latitude,
+      longitude: locationCor.longitude,
+    });
+    showApiLoading(false);
   };
 
   const location = async () => {
     showApiLoading(true);
-    Geolocation.getCurrentPosition(
-      position => {
-        console.log('positions', position);
-        collectedLocationData([
-          {
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-          },
-        ]);
-        showApiLoading(false);
-        setIsEnabled(prevState => !prevState);
-      },
-      error => {
-        console.log('error:', error);
-        showApiLoading(false);
-      },
+    const locationCor = await locationCoordinates();
+    collectedLocationData([
       {
-        interval: 0,
-        enableHighAccuracy: false,
-        // maximumAge: 10000,
-        timeout: 15000,
-        distanceFilter: 0,
+        latitude: locationCor.latitude,
+        longitude: locationCor.longitude,
       },
-    );
-    // Geolocation.getCurrentPosition(
-    //   position => {
-    //     console.log('positions', position);
-    //     collectedLocationData([
-    //       {
-    //         latitude: position.coords.latitude,
-    //         longitude: position.coords.longitude,
-    //       },
-    //     ]);
-    //     navigation.navigate('CollectLocationFromMapScreen', {
-    //       latitude: position.coords.latitude,
-    //       longitude: position.coords.longitude,
-    //     });
-    //     showApiLoading(false);
-    //     setIsEnabled(prevState => !prevState);
-    //   },
-    //   error => {
-    //     console.log('error:', error);
-    //     showApiLoading(false);
-    //   },
-    //   // {
-    //   //   enableHighAccuracy: true,
-    //   //   // timeout: 20000,
-    //   //   // maximumAge: 10000,
-    //   //   distanceFilter: 0,
-    //   //   forceRequestLocation: true,
-    //   //   accuracy: {
-    //   //     android: 'high',
-    //   //     ios: 'bestForNavigation',
-    //   //   },
-    //   // },
-    //   // {
-    //   //   enableHighAccuracy: true,
-    //   //   timeout: 15000,
-    //   //   // maximumAge: 10000,
-    //   //   distanceFilter: 0,
-    //   //   // forceRequestLocation: true,
-    //   //   accuracy: {
-    //   //     android: 'high',
-    //   //   },
-    //   // },
-    // );
+    ]);
+    setIsEnabled(prevState => !prevState);
+    showApiLoading(false);
   };
 
   const locationOffset = () => {
