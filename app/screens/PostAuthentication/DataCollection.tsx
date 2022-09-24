@@ -9,6 +9,7 @@ import {
   TextInput,
 } from 'react-native';
 import React, {useState} from 'react';
+
 import {launchCamera} from 'react-native-image-picker';
 import {
   RAlert,
@@ -230,6 +231,8 @@ const DataCollection: React.FC<Props> = ({navigation}) => {
   }
 
   const locationCoordinates = (): Promise<LocationInterface> => {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const {netConnection} = useUIElements();
     return new Promise((resolve, reject) => {
       const geolocation = Geolocation;
       geolocation.setRNConfiguration({
@@ -245,12 +248,12 @@ const DataCollection: React.FC<Props> = ({navigation}) => {
           });
         },
         error => {
-          Alert.alert('error:', `${error}`);
+          Alert.alert('error:', JSON.stringify(`${error.message}`));
           reject(error);
         },
         {
           interval: 0,
-          enableHighAccuracy: true,
+          enableHighAccuracy: !netConnection,
           timeout: 15000,
           distanceFilter: 0,
         },
