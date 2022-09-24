@@ -27,6 +27,7 @@ import {HomeStackParamList} from '@app/app/navigation/Navigator';
 import {RouteProp} from '@react-navigation/native';
 import Slider from '@react-native-community/slider';
 import Geolocation from '@react-native-community/geolocation';
+import {bugRN} from '../../helpers/bugfender';
 
 interface NavigationProps {
   navigation: NativeStackNavigationProp<HomeStackParamList, 'DataCollection'>;
@@ -228,10 +229,22 @@ const DataCollection: React.FC<Props> = ({navigation}) => {
     latitude: number;
     longitude: number;
   }
-
-  const locationCoordinates = (): Promise<LocationInterface> => {
-    return new Promise((resolve, reject) => {
+  const requestLocationPermission = async (location: typeof Geolocation) => {
+    return new Promise<void>((resolve, reject) => {
+      location.requestAuthorization(
+        () => {
+          resolve();
+        },
+        error => {
+          reject(error);
+        },
+      );
+    });
+  };
+  const locationCoordinates = async (): Promise<LocationInterface> => {
+    return new Promise(async (resolve, reject) => {
       const geolocation = Geolocation;
+      await requestLocationPermission(geolocation);
       geolocation.setRNConfiguration({
         skipPermissionRequests: true,
         authorizationLevel: 'always',
@@ -245,7 +258,8 @@ const DataCollection: React.FC<Props> = ({navigation}) => {
           });
         },
         error => {
-          Alert.alert('error:', `${error}`);
+          bugRN.getInstance().error(`${JSON.stringify(error)}`);
+          Alert.alert('error:', `${JSON.stringify(error.message)}`);
           reject(error);
         },
         {
