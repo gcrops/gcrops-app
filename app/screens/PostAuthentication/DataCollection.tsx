@@ -231,8 +231,6 @@ const DataCollection: React.FC<Props> = ({navigation}) => {
   }
 
   const locationCoordinates = (): Promise<LocationInterface> => {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    const {netConnection} = useUIElements();
     return new Promise((resolve, reject) => {
       const geolocation = Geolocation;
       geolocation.setRNConfiguration({
@@ -248,12 +246,18 @@ const DataCollection: React.FC<Props> = ({navigation}) => {
           });
         },
         error => {
-          Alert.alert('error:', JSON.stringify(`${error.message}`));
+          <RAlert
+            title="Location Error"
+            message={JSON.stringify(error.message)}
+            showAlert={true}
+            setShowAlert={setShowValidationAlert}
+            confirmationText={'OK'}
+          />;
           reject(error);
         },
         {
           interval: 0,
-          enableHighAccuracy: !netConnection,
+          enableHighAccuracy: true,
           timeout: 15000,
           distanceFilter: 0,
         },
@@ -263,24 +267,32 @@ const DataCollection: React.FC<Props> = ({navigation}) => {
 
   const mapLocation = async () => {
     showApiLoading(true);
-    const locationCor = await locationCoordinates();
-    navigation.navigate('CollectLocationFromMapScreen', {
-      latitude: locationCor.latitude,
-      longitude: locationCor.longitude,
-    });
+    try {
+      const locationCor = await locationCoordinates();
+      navigation.navigate('CollectLocationFromMapScreen', {
+        latitude: locationCor.latitude,
+        longitude: locationCor.longitude,
+      });
+    } catch (error) {
+      console.log(error);
+    }
     showApiLoading(false);
   };
 
   const location = async () => {
     showApiLoading(true);
-    const locationCor = await locationCoordinates();
-    collectedLocationData([
-      {
-        latitude: locationCor.latitude,
-        longitude: locationCor.longitude,
-      },
-    ]);
-    setIsEnabled(prevState => !prevState);
+    try {
+      const locationCor = await locationCoordinates();
+      collectedLocationData([
+        {
+          latitude: locationCor.latitude,
+          longitude: locationCor.longitude,
+        },
+      ]);
+      setIsEnabled(prevState => !prevState);
+    } catch (error) {
+      console.log(error);
+    }
     showApiLoading(false);
   };
 
