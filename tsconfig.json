@@ -1,6 +1,6 @@
 // prettier-ignore
 {
-  "extends": "@tsconfig/react-native/tsconfig.json", /* Recommended React Native TSConfig base */
+  "extends": "@tsconfig/react-native/tsconfig.json",/* Replace with the path to a valid tsconfig.json file */
   "compilerOptions": {
     /* Basic Options */
     "target": "esnext" /* Specify ECMAScript target version: 'ES3' (default), 'ES5', 'ES2015', 'ES2016', 'ES2017','ES2018' or 'ESNEXT'. */,
