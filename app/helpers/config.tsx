@@ -21,7 +21,7 @@ const AppConfig =
   AppEnvironment === AppEnv.DEV
     ? developmentConfig
     : AppEnvironment === AppEnv.PROD
-    ? prodConfig
-    : prodConfig;
+      ? prodConfig
+      : prodConfig;
 
 export {AppConfig, AppEnvironment, AppEnv};
