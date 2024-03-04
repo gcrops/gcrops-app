@@ -50,7 +50,7 @@ jobs:
 
       - name: Generate App APK
         run: |
-          cd android && ./gradlew clean && ./gradlew :app:bundleRelease --no-daemon
+          cd android && ./gradlew clean && ./gradlew assembleRelease --no-daemon
 
       - name: Sign APK
         id: sign_app
