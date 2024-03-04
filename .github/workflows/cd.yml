@@ -1,7 +1,7 @@
 name: CI/CD For React native builds
 on:
   push:
-    branches: [ "main" ]
+    branches: ['main']
 
 jobs:
   android-build:
@@ -50,7 +50,7 @@ jobs:
 
       - name: Generate App APK
         run: |
-          cd android && ./gradlew assembleRelease --no-daemon
+          cd android && ./gradlew clean && ./gradlew :app:bundleRelease --no-daemon
 
       - name: Sign APK
         id: sign_app
